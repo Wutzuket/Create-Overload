@@ -1,0 +1,29 @@
+# Main Class
+cpw.mods.bootstraplauncher.BootstrapLauncher
+
+# NeoForge Run-Type Program Arguments
+--launchTarget
+forgedatadev
+--assetIndex
+17
+--assetsDir
+C:\\Users\\maxim\\.gradle\\caches\\neoformruntime\\assets
+--gameDir
+.
+--fml.fmlVersion
+4.0.39
+--fml.mcVersion
+1.21.1
+--fml.neoForgeVersion
+21.1.176
+--fml.neoFormVersion
+20240808.144430
+
+# User Supplied Program Arguments
+--mod
+create_overdrive
+--all
+--output
+"C:\\Users\\maxim\\IdeaProjects\\Create Overdrive\\src\\generated\\resources"
+--existing
+"C:\\Users\\maxim\\IdeaProjects\\Create Overdrive\\src\\main\\resources"

@@ -1,0 +1,16 @@
+{
+  "type": "create_overdrive:particle_accelerator",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:iron_block"
+    },
+    {
+      "item": "minecraft:coal_block"
+    }
+  ],
+  "result": {
+    "id": "minecraft:diamond",
+    "count": 1
+  }
+}

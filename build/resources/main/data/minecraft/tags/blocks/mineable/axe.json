@@ -1,0 +1,7 @@
+{
+  "values": [
+    "create_particle_accelerator:particle_accelerator_input",
+    "create_particle_accelerator:particle_accelerator_output",
+    "create_particle_accelerator:particle_accelerator_core"
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": false,
+  "key": {
+    "A": {
+      "item": "create:brass_casing"
+    },
+    "P": {
+      "item": "create:brass_funnel"
+    },
+    "S": {
+      "item": "create:item_vault"
+    }
+  },
+  "pattern": [
+    " AAA ",
+    "AAPAA",
+    "APSPA",
+    "AAPAA",
+    " AAA "
+  ],
+  "result": {
+    "count": 1,
+    "id": "create_overdrive:particle_accelerator_output"
+  },
+  "show_notification": false
+}

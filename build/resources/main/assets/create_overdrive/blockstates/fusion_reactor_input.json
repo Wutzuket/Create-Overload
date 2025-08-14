@@ -1,0 +1,5 @@
+{
+	"variants": {
+		"": { "model": "create_overdrive:block/fusion_reactor_input" }
+	}
+}

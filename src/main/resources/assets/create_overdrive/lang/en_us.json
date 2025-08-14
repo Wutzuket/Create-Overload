@@ -1,0 +1,30 @@
+{
+  "block.create_overdrive.particle_accelerator_core": "Particle Accelerator Core",
+  "block.create_overdrive.particle_accelerator_input": "Particle Accelerator Input",
+  "block.create_overdrive.particle_accelerator_output": "Particle Accelerator Output",
+  "block.create_overdrive.fusion_reactor_casing": "Fusion Reactor Casing",
+  "block.create_overdrive.fusion_reactor_core": "Fusion Reactor Core",
+  "block.create_overdrive.fusion_reactor_input": "Fusion Reactor Input",
+
+  "item.create_overdrive.particle_accelerator_core": "Particle Accelerator Core",
+  "item.create_overdrive.particle_accelerator_input": "Particle Accelerator Input",
+  "item.create_overdrive.particle_accelerator_output": "Particle Accelerator Output",
+  "item.create_overdrive.fusion_reactor_casing": "Fusion Reactor Casing",
+  "item.create_overdrive.fusion_reactor_core": "Fusion Reactor Core",
+  "item.create_overdrive.fusion_reactor_input": "Fusion Reactor Input",
+
+  "JEI.create_overdrive.particle_accelerator_core": "Particle Accelerator",
+
+  "itemGroup.create_overdrive_tab": "Particle Accelerator",
+
+
+  "create_overdrive.ponder.particle_accelerator_core.header": "Building and Using the Particle Accelerator Core",
+  "create_overdrive.ponder.particle_accelerator_core.text_1": "This is the Particle Accelerator Core. It is the heart of the machine.",
+  "create_overdrive.ponder.particle_accelerator_core.text_2": "This is the Input Block. Materials are inserted here.",
+  "create_overdrive.ponder.particle_accelerator_core.text_3": "This is the Output Block. Results are output here.",
+  "create_overdrive.ponder.particle_accelerator_core.text_4": "Build a circular structure using Brass Casings.",
+  "create_overdrive.ponder.particle_accelerator_core.text_5": "Activate the core by building the structure correctly.",
+  "create_overdrive.ponder.particle_accelerator_core.text_6": "If the structure is correct, the core will activate and start working.",
+
+  "create_overdrive.gui.burnrate.title": "Burn rate"
+}
