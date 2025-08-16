@@ -114,28 +114,4 @@ public class AcceleratorinputBlockEntity extends BlockEntity implements Containe
             (be, context) -> context instanceof Direction && be instanceof AcceleratorinputBlockEntity inputBe ? inputBe.items : null);
     }
 
-    // Sichere Goggle-Tooltip-Implementierung
-    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        try {
-            // Defensive Implementierung um IndexOutOfBoundsException zu vermeiden
-            if (tooltip == null) {
-                return false;
-            }
-
-            // Füge Inventar-Informationen hinzu
-            int itemCount = 0;
-            for (int i = 0; i < items.getSlots(); i++) {
-                if (!items.getStackInSlot(i).isEmpty()) {
-                    itemCount++;
-                }
-            }
-
-            tooltip.add(Component.literal("Items: " + itemCount + "/" + items.getSlots()));
-
-            return true;
-        } catch (Exception e) {
-            // Fange alle Ausnahmen ab, um Create Mod's GoggleOverlayRenderer nicht zu stören
-            return false;
-        }
-    }
 }

@@ -1,6 +1,7 @@
 package de.wutzuket.create_overdrive.blocks.FusionReactor;
 
 import com.simibubi.create.AllBlocks;
+import de.wutzuket.create_overdrive.blocks.FusionReactorInput.FusionReactorInputBlockEntity;
 import de.wutzuket.create_overdrive.index.CPABlocks;
 import de.wutzuket.create_overdrive.particles.ModParticleTypes;
 import net.minecraft.core.BlockPos;
@@ -8,13 +9,21 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.joml.Vector3f;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FusionReactorStructure {
 
     private final Level level;
     private final FusionReactorCoreBlockEntity coreBlockEntity;
+    private List<BlockPos> inputBlockPositions = new ArrayList<>();
 
     public FusionReactorStructure(Level level, FusionReactorCoreBlockEntity coreBlockEntity) {
         this.level = level;
@@ -23,10 +32,13 @@ public class FusionReactorStructure {
 
     public boolean checkStructure() {
         int FusionCasingCount = 0;
+        int inputBlockCount = 0;
         BlockPos corePos = coreBlockEntity.getBlockPos();
         boolean layer1 = false;
         boolean layer2 = false;
         boolean layer3 = false;
+
+        inputBlockPositions.clear(); // Clear previous positions
 
         if (!layer1){
             for (int i = -2; i <= 3; i++) {
@@ -41,12 +53,18 @@ public class FusionReactorStructure {
         }
 
         if (!layer2 && layer1) {
+            // Äußerer Ring - hier müssen Input-Blöcke gezählt werden
             for (int i = -3; i <= 4; i++) {
-                FusionCasingCount += checkBlockWithEndRod(corePos.offset(i, 0, 4));
-                FusionCasingCount += checkBlockWithEndRod(corePos.offset(-i, 0, -4));
-                FusionCasingCount += checkBlockWithEndRod(corePos.offset(4, 0, -i));
-                FusionCasingCount += checkBlockWithEndRod(corePos.offset(-4, 0, i));
+                FusionCasingCount += checkBlockWithInputSupport(corePos.offset(i, 0, 4));
+                FusionCasingCount += checkBlockWithInputSupport(corePos.offset(-i, 0, -4));
+                FusionCasingCount += checkBlockWithInputSupport(corePos.offset(4, 0, -i));
+                FusionCasingCount += checkBlockWithInputSupport(corePos.offset(-4, 0, i));
+                inputBlockCount += countInputBlocks(corePos.offset(i, 0, 4));
+                inputBlockCount += countInputBlocks(corePos.offset(-i, 0, -4));
+                inputBlockCount += countInputBlocks(corePos.offset(4, 0, -i));
+                inputBlockCount += countInputBlocks(corePos.offset(-4, 0, i));
             }
+            // Innerer Ring
             for (int i = -1; i <= 2; i++) {
                 FusionCasingCount += checkBlockWithEndRod(corePos.offset(i, 0, 2));
                 FusionCasingCount += checkBlockWithEndRod(corePos.offset(-i, 0, -2));
@@ -59,7 +77,7 @@ public class FusionReactorStructure {
             FusionCasingCount += checkBlockWithEndRod(corePos.offset(0, 0, 1));
         }
 
-        if (FusionCasingCount == 76 && !layer2) {
+        if (FusionCasingCount == 76 && !layer2 && inputBlockCount >= 1) {
             layer2 = true;
         }
         if (!layer3 && layer2) {
@@ -74,7 +92,7 @@ public class FusionReactorStructure {
             layer3 = true;
         }
 
-        boolean structureValid = layer3;
+        boolean structureValid = layer3 && inputBlockCount >= 1;
 
         if (structureValid) {
             if (!coreBlockEntity.wasJustAssembled()) {
@@ -86,6 +104,71 @@ public class FusionReactorStructure {
         }
 
         return structureValid;
+    }
+
+    public boolean consumeFluidFromInputs(float burnrate, Fluid requiredFluid) {
+        if (inputBlockPositions.isEmpty() || burnrate <= 0 || requiredFluid == null) {
+            return false;
+        }
+
+        int totalFluidNeeded = Math.max(1, (int)(burnrate * 1)); // Gesamter Fluidverbrauch
+
+        // Sammle alle Input-Blöcke die genug vom gewünschten Fluid haben
+        List<BlockPos> availableInputs = new ArrayList<>();
+        for (BlockPos pos : inputBlockPositions) {
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof FusionReactorInputBlockEntity inputBE) {
+                IFluidHandler tank = inputBE.tank.getPrimaryHandler();
+                FluidStack fluidInTank = tank.getFluidInTank(0);
+
+                if (!fluidInTank.isEmpty() &&
+                    fluidInTank.getFluid() == requiredFluid &&
+                    fluidInTank.getAmount() > 0) {
+                    availableInputs.add(pos);
+                }
+            }
+        }
+
+        // Wenn keine Input-Blöcke das gewünschte Fluid haben, Prozess stoppen
+        if (availableInputs.isEmpty()) {
+            return false;
+        }
+
+        // Fluidverbrauch gleichmäßig auf verfügbare Input-Blöcke verteilen
+        int fluidPerInput = Math.max(1, totalFluidNeeded / availableInputs.size());
+        int remainingFluid = totalFluidNeeded % availableInputs.size();
+
+        // Fluid aus verfügbaren Input-Blöcken entnehmen
+        for (int i = 0; i < availableInputs.size(); i++) {
+            BlockPos pos = availableInputs.get(i);
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof FusionReactorInputBlockEntity inputBE) {
+                IFluidHandler tank = inputBE.tank.getPrimaryHandler();
+                int fluidToConsume = fluidPerInput;
+
+                // Verteile Restfluid auf die ersten Input-Blöcke
+                if (i < remainingFluid) {
+                    fluidToConsume += 1;
+                }
+
+                // Nur so viel entnehmen wie verfügbar ist und vom richtigen Typ
+                FluidStack fluidInTank = tank.getFluidInTank(0);
+                if (fluidInTank.getFluid() == requiredFluid) {
+                    int actualConsumption = Math.min(fluidToConsume, fluidInTank.getAmount());
+
+                    if (actualConsumption > 0) {
+                        tank.drain(actualConsumption, IFluidHandler.FluidAction.EXECUTE);
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    // Behalte die alte Methode für Rückwärtskompatibilität
+    public boolean consumeWaterFromInputs(float burnrate) {
+        return consumeFluidFromInputs(burnrate, net.minecraft.world.level.material.Fluids.WATER);
     }
 
     private int checkBlockWithEndRod(BlockPos pos) {
@@ -169,5 +252,27 @@ public class FusionReactorStructure {
         if (level instanceof ServerLevel _level) {
             _level.sendParticles(new DustParticleOptions(new Vector3f(1.0F, 0.0F, 0.0F), 1.0F), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 10, 0.5, 0.5, 0.5, 0.1);
         }
+    }
+
+    private int checkBlockWithInputSupport(BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (state.is(CPABlocks.FUSION_REACTOR_CASING.get())) {
+            return 1;
+        } else if (state.is(CPABlocks.FUSION_REACTOR_INPUT.get())) {
+            return 1; // Input-Block zählt als gültiger Block
+        } else if (!state.is(CPABlocks.ACCELERATOR_INPUT.get()) && !state.is(CPABlocks.ACCELERATOR_OUTPUT.get())) {
+            showFusionReactorCasingParticles(pos);
+            return 0;
+        }
+        return 0;
+    }
+
+    private int countInputBlocks(BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (state.is(CPABlocks.FUSION_REACTOR_INPUT.get())) {
+            inputBlockPositions.add(pos); // Sammle Input-Block Positionen
+            return 1;
+        }
+        return 0;
     }
 }

@@ -18,16 +18,21 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 
 
 public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
 
     protected float burnrate;
     protected ScrollValueBehaviour burnrateCapacity;
+    protected Fluid requiredFluid = Fluids.WATER; // Variable für gewünschten Fluid-Typ
 
     private boolean active = false;
     private boolean wasJustAssembled = false;
     private boolean first = true;
+
+    private FusionReactorStructure structure;
 
     public FusionReactorCoreBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -89,6 +94,7 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
         tag.putBoolean("WasJustAssembled", wasJustAssembled);
         tag.putFloat("Burnrate", burnrate);
         tag.putBoolean("First", first);
+        tag.putString("RequiredFluid", requiredFluid.toString());
     }
 
     @Override
@@ -98,6 +104,11 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
         wasJustAssembled = tag.getBoolean("WasJustAssembled");
         burnrate = tag.getFloat("Burnrate");
         first = tag.getBoolean("First");
+        // Fluid aus NBT laden (optional, standardmäßig Wasser)
+        if (tag.contains("RequiredFluid")) {
+            // Hier könnte man den Fluid aus dem String zurück konvertieren
+            // Für jetzt bleibt es bei Wasser als Standard
+        }
     }
 
     @Override
@@ -111,8 +122,13 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
         }
 
         if (!this.level.isClientSide) {
-            FusionReactorStructure structure = new FusionReactorStructure(this.level, this);
-            boolean isValid = structure.checkStructure() && burnrate > 0; // Nur aktiv wenn Struktur gültig UND Burnrate > 0
+            if (structure == null) {
+                structure = new FusionReactorStructure(this.level, this);
+            }
+
+            boolean structureValid = structure.checkStructure();
+            boolean hasFluid = structureValid && structure.consumeFluidFromInputs(burnrate, requiredFluid);
+            boolean isValid = structureValid && burnrate > 0 && hasFluid;
 
             if(isValid != active) {
                 setActive(isValid);
@@ -146,6 +162,16 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
 
     public float getBurnrate() {
         return burnrate;
+    }
+
+    // Getter und Setter für den Required Fluid
+    public Fluid getRequiredFluid() {
+        return requiredFluid;
+    }
+
+    public void setRequiredFluid(Fluid fluid) {
+        this.requiredFluid = fluid;
+        notifyUpdate();
     }
 
 }

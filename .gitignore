@@ -1,0 +1,25 @@
+# Gradle / Build Output
+.gradle/
+build/
+out/
+run/
+
+# IntelliJ / IDE
+.idea/
+*.iml
+
+# Minecraft / NeoForge runtime artifacts
+**/neoformruntime/
+
+# Compiled classes / temp
+*.class
+*.log
+*.lock
+*.bin
+*.swp
+*.tmp
+
+# OS / Misc
+.DS_Store
+Thumbs.db
+

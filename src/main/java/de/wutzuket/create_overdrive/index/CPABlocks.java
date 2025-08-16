@@ -10,6 +10,7 @@ import de.wutzuket.create_overdrive.blocks.AcceleratorInput.AcceleratorinputBloc
 import de.wutzuket.create_overdrive.blocks.AcceleratorOutput.AcceleratorOutputBlock;
 import de.wutzuket.create_overdrive.blocks.FusionReactor.Casing;
 import de.wutzuket.create_overdrive.blocks.FusionReactor.FusionReactorCoreBlock;
+import de.wutzuket.create_overdrive.blocks.FusionReactorInput.FusionReactorInputBlock;
 import de.wutzuket.create_overdrive.blocks.ParticleAccelerator.ParticleAcceleratorCoreBlock;
 import net.minecraft.tags.TagKey;
 
@@ -19,6 +20,7 @@ public class CPABlocks {
     public static BlockEntry<AcceleratorOutputBlock> ACCELERATOR_OUTPUT;
     public static BlockEntry<Casing> FUSION_REACTOR_CASING;
     public static BlockEntry<FusionReactorCoreBlock> FUSION_REACTOR_CORE;
+    public static BlockEntry<FusionReactorInputBlock> FUSION_REACTOR_INPUT;
 
     public CPABlocks() {
     }
@@ -32,6 +34,7 @@ public class CPABlocks {
         ACCELERATOR_OUTPUT = ((BlockBuilder)Main.REGISTRATE.block("particle_accelerator_output", AcceleratorOutputBlock::new).initialProperties(SharedProperties::softMetal).properties((p) -> p.strength(2.0F, 2.0F)).tag(new TagKey[]{AllBlockTags.SAFE_NBT.tag, AllBlockTags.WRENCH_PICKUP.tag}).item().transform(ModelGen.customItemModel())).register();
         FUSION_REACTOR_CASING = ((BlockBuilder)Main.REGISTRATE.block("fusion_reactor_casing", AcceleratorOutputBlock::new).initialProperties(SharedProperties::softMetal).properties((p) -> p.strength(2.0F, 2.0F)).tag(new TagKey[]{AllBlockTags.SAFE_NBT.tag, AllBlockTags.WRENCH_PICKUP.tag}).item().transform(ModelGen.customItemModel())).register();
         FUSION_REACTOR_CORE = ((BlockBuilder)Main.REGISTRATE.block("fusion_reactor_core", ParticleAcceleratorCoreBlock::new).initialProperties(SharedProperties::softMetal).properties((p) -> p.strength(2.0F, 2.0F)).tag(new TagKey[]{AllBlockTags.SAFE_NBT.tag, AllBlockTags.WRENCH_PICKUP.tag}).item().transform(ModelGen.customItemModel())).register();
+        FUSION_REACTOR_INPUT = ((BlockBuilder)Main.REGISTRATE.block("fusion_reactor_input", FusionReactorInputBlock::new).initialProperties(SharedProperties::softMetal).properties((p) -> p.strength(2.0F, 2.0F)).tag(new TagKey[]{AllBlockTags.SAFE_NBT.tag, AllBlockTags.WRENCH_PICKUP.tag}).item().transform(ModelGen.customItemModel())).register();
 
     }
 }

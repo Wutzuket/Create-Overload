@@ -9,6 +9,7 @@ import de.wutzuket.create_overdrive.blocks.FusionReactor.FusionReactorCoreBlock;
 import de.wutzuket.create_overdrive.blocks.FusionReactor.FusionReactorCoreBlockEntity;
 import de.wutzuket.create_overdrive.blocks.FusionReactor.FusionReactorCoreBlockRenderer;
 import de.wutzuket.create_overdrive.blocks.FusionReactor.FusionReactorCoreVisual;
+import de.wutzuket.create_overdrive.blocks.FusionReactorInput.FusionReactorInputBlockEntity;
 import de.wutzuket.create_overdrive.blocks.ParticleAccelerator.ParticleAcceleratorCoreBlockEntity;
 import de.wutzuket.create_overdrive.blocks.ParticleAccelerator.ParticleAcceleratorCoreBlockRenderer;
 import de.wutzuket.create_overdrive.blocks.ParticleAccelerator.ParticleAcceleratorCoreVisual;
@@ -20,6 +21,7 @@ public class CPABlockEntities {
     public static final BlockEntityEntry<AcceleratorinputBlockEntity> ACCELERATOR_INPUT;
     public static final BlockEntityEntry<AcceleratorOutputBlockEntity> ACCELERATOR_OUTPUT;
     public static final BlockEntityEntry<FusionReactorCoreBlockEntity> FUSION_REACTOR_CORE;
+    public static final BlockEntityEntry<FusionReactorInputBlockEntity> FUSION_REACTOR_INPUT;
 
     static {
 
@@ -41,6 +43,10 @@ public class CPABlockEntities {
                 .visual(() -> FusionReactorCoreVisual::new)
                 .validBlocks(() -> CPABlocks.FUSION_REACTOR_CORE.get())
                 .renderer(() -> FusionReactorCoreBlockRenderer::new)
+                .register();
+
+        FUSION_REACTOR_INPUT = REGISTRATE.blockEntity("fusion_reactor_input", FusionReactorInputBlockEntity::new)
+                .validBlocks(() -> CPABlocks.FUSION_REACTOR_INPUT.get())
                 .register();
 
     }
