@@ -12,11 +12,13 @@
   "item.create_overdrive.fusion_reactor_casing": "Fusion Reactor Casing",
   "item.create_overdrive.fusion_reactor_core": "Fusion Reactor Core",
   "item.create_overdrive.fusion_reactor_input": "Fusion Reactor Input",
+  "item.create_overdrive.fusion_reactor_fuel_bucket": "Fusion Reactor Fuel Bucket",
+
+  "fluid.create_overdrive.fusion_reactor_fuel": "Fusion Reactor Fuel",
 
   "JEI.create_overdrive.particle_accelerator_core": "Particle Accelerator",
 
   "itemGroup.create_overdrive_tab": "Particle Accelerator",
-
 
   "create_overdrive.ponder.particle_accelerator_core.header": "Building and Using the Particle Accelerator Core",
   "create_overdrive.ponder.particle_accelerator_core.text_1": "This is the Particle Accelerator Core. It is the heart of the machine.",

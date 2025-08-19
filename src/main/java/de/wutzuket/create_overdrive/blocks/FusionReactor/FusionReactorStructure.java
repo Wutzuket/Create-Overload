@@ -1,8 +1,8 @@
 package de.wutzuket.create_overdrive.blocks.FusionReactor;
 
-import com.simibubi.create.AllBlocks;
 import de.wutzuket.create_overdrive.blocks.FusionReactorInput.FusionReactorInputBlockEntity;
 import de.wutzuket.create_overdrive.index.CPABlocks;
+import de.wutzuket.create_overdrive.index.CPAFluids;
 import de.wutzuket.create_overdrive.particles.ModParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -111,53 +111,38 @@ public class FusionReactorStructure {
             return false;
         }
 
-        int totalFluidNeeded = Math.max(1, (int)(burnrate * 1)); // Gesamter Fluidverbrauch
+        int totalFluidNeeded = Math.max(1, (int)(burnrate * 1));
 
-        // Sammle alle Input-Blöcke die genug vom gewünschten Fluid haben
         List<BlockPos> availableInputs = new ArrayList<>();
         for (BlockPos pos : inputBlockPositions) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof FusionReactorInputBlockEntity inputBE) {
                 IFluidHandler tank = inputBE.tank.getPrimaryHandler();
                 FluidStack fluidInTank = tank.getFluidInTank(0);
-
-                if (!fluidInTank.isEmpty() &&
-                    fluidInTank.getFluid() == requiredFluid &&
-                    fluidInTank.getAmount() > 0) {
+                if (isRequiredFluid(fluidInTank, requiredFluid) && fluidInTank.getAmount() > 0) {
                     availableInputs.add(pos);
                 }
             }
         }
 
-        // Wenn keine Input-Blöcke das gewünschte Fluid haben, Prozess stoppen
         if (availableInputs.isEmpty()) {
             return false;
         }
 
-        // Fluidverbrauch gleichmäßig auf verfügbare Input-Blöcke verteilen
         int fluidPerInput = Math.max(1, totalFluidNeeded / availableInputs.size());
         int remainingFluid = totalFluidNeeded % availableInputs.size();
 
-        // Fluid aus verfügbaren Input-Blöcken entnehmen
         for (int i = 0; i < availableInputs.size(); i++) {
             BlockPos pos = availableInputs.get(i);
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof FusionReactorInputBlockEntity inputBE) {
                 IFluidHandler tank = inputBE.tank.getPrimaryHandler();
-                int fluidToConsume = fluidPerInput;
-
-                // Verteile Restfluid auf die ersten Input-Blöcke
-                if (i < remainingFluid) {
-                    fluidToConsume += 1;
-                }
-
-                // Nur so viel entnehmen wie verfügbar ist und vom richtigen Typ
+                int fluidToConsume = fluidPerInput + (i < remainingFluid ? 1 : 0);
                 FluidStack fluidInTank = tank.getFluidInTank(0);
-                if (fluidInTank.getFluid() == requiredFluid) {
-                    int actualConsumption = Math.min(fluidToConsume, fluidInTank.getAmount());
-
-                    if (actualConsumption > 0) {
-                        tank.drain(actualConsumption, IFluidHandler.FluidAction.EXECUTE);
+                if (isRequiredFluid(fluidInTank, requiredFluid)) {
+                    int actual = Math.min(fluidToConsume, fluidInTank.getAmount());
+                    if (actual > 0) {
+                        tank.drain(actual, IFluidHandler.FluidAction.EXECUTE);
                     }
                 }
             }
@@ -166,9 +151,14 @@ public class FusionReactorStructure {
         return true;
     }
 
+    private boolean isRequiredFluid(FluidStack stack, Fluid required) {
+        // Vergleicht über FluidType -> akzeptiert Source & Flowing derselben Registrierung
+        return !stack.isEmpty() && stack.getFluid().getFluidType() == required.getFluidType();
+    }
+
     // Behalte die alte Methode für Rückwärtskompatibilität
     public boolean consumeWaterFromInputs(float burnrate) {
-        return consumeFluidFromInputs(burnrate, net.minecraft.world.level.material.Fluids.WATER);
+        return consumeFluidFromInputs(burnrate, CPAFluids.FUSIONREACTORFUEL.get());
     }
 
     private int checkBlockWithEndRod(BlockPos pos) {

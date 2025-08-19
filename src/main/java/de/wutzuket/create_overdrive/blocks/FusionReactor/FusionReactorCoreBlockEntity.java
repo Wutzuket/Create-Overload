@@ -8,6 +8,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.blockEntity.behaviour.CenteredSideValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
 
+import de.wutzuket.create_overdrive.index.CPAFluids;
 import de.wutzuket.create_overdrive.util.StressScrollValueBehaviour;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -20,6 +21,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 
 
 public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
@@ -37,6 +40,8 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
     public FusionReactorCoreBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         setLazyTickRate(20);
+        // Direkt auf unser Fuel setzen
+        this.requiredFluid = CPAFluids.FUSIONREACTORFUEL.get(); // benutzt FluidType für Vergleich (Flowing Variante ok)
     }
 
     @Override
@@ -94,7 +99,8 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
         tag.putBoolean("WasJustAssembled", wasJustAssembled);
         tag.putFloat("Burnrate", burnrate);
         tag.putBoolean("First", first);
-        tag.putString("RequiredFluid", requiredFluid.toString());
+        tag.putString("RequiredFluid",
+            BuiltInRegistries.FLUID.getKey(requiredFluid).toString());
     }
 
     @Override
@@ -106,8 +112,13 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
         first = tag.getBoolean("First");
         // Fluid aus NBT laden (optional, standardmäßig Wasser)
         if (tag.contains("RequiredFluid")) {
-            // Hier könnte man den Fluid aus dem String zurück konvertieren
-            // Für jetzt bleibt es bei Wasser als Standard
+            try {
+                ResourceLocation rl = ResourceLocation.parse(tag.getString("RequiredFluid"));
+                Fluid loaded = BuiltInRegistries.FLUID.get(rl);
+                if (loaded != null && loaded != Fluids.EMPTY)
+                    requiredFluid = loaded;
+            } catch (Exception ignored) {
+            }
         }
     }
 
@@ -171,6 +182,7 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
 
     public void setRequiredFluid(Fluid fluid) {
         this.requiredFluid = fluid;
+        updateGeneratedRotation();
         notifyUpdate();
     }
 
