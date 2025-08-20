@@ -94,6 +94,7 @@ public class Main {
     public static final DeferredItem<BlockItem> FUSION_REACTOR_CORE_ITEM;
     public static final DeferredBlock<Block> FUSION_REACTOR_INPUT;
     public static final DeferredItem<BlockItem> FUSION_REACTOR_INPUT_ITEM;
+    public static final DeferredItem<BucketItem> FUSION_REACTOR_FUEL_BUCKET;
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> PARTICLE_ACCELERATOR_TAB;
     public static int RADIUS;
     public static int BlockCountAccelerator;
@@ -139,6 +140,7 @@ public class Main {
             event.accept((CPABlocks.FUSION_REACTOR_CASING));
             event.accept((CPABlocks.FUSION_REACTOR_CORE));
             event.accept((CPABlocks.FUSION_REACTOR_INPUT));
+            event.accept(FUSION_REACTOR_FUEL_BUCKET);
         }
 
     }
@@ -164,6 +166,9 @@ public class Main {
         FUSION_REACTOR_CORE_ITEM = ITEMS.registerSimpleBlockItem("fusion_reactor_core", FUSION_REACTOR_CORE);
         FUSION_REACTOR_INPUT = BLOCKS.register("fusion_reactor_input", () -> new FusionReactorInputBlock(Properties.of().mapColor(MapColor.METAL).strength(3.5F)));
         FUSION_REACTOR_INPUT_ITEM = ITEMS.registerSimpleBlockItem("fusion_reactor_input", FUSION_REACTOR_INPUT);
+
+        FUSION_REACTOR_FUEL_BUCKET = ITEMS.register("fusion_reactor_fuel_bucket", () -> new BucketItem(CPAFluids.FUSIONREACTORFUEL.get(), new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
+
         PARTICLE_ACCELERATOR_TAB = CREATIVE_MODE_TABS.register("create_overdrive_tab", () -> CreativeModeTab.builder().icon(() -> new ItemStack((ItemLike)PARTICLE_ACCELERATOR_CORE.get())).title(Component.translatable("itemGroup.create_overdrive_tab")).build());
         RADIUS = 10;
     }

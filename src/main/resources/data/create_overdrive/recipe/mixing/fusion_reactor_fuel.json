@@ -1,17 +1,17 @@
 {
   "type": "create:mixing",
   "heat_requirement": "superheated",
-  "processing_time": 3000,
+  "processing_time": 1,
   "ingredients": [
     {
       "type": "fluid_stack",
-      "amount": 1000,
+      "amount": 100,
       "fluid": "minecraft:water"
     }
   ],
   "results": [
     {
-      "amount": 1,
+      "amount": 10,
       "id": "create_overdrive:fusion_reactor_fuel"
     }
   ]
