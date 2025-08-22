@@ -19,8 +19,8 @@ public class CPAPonders {
 
     public static void registerScenes(PonderSceneRegistrationHelper<ResourceLocation> helper) {
         PonderSceneRegistrationHelper<ItemProviderEntry<?,?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
-        HELPER.addStoryBoard(CPABlocks.PARTICLE_ACCELERATOR_CORE, "particle_accelerator_core", 
+        HELPER.addStoryBoard(CPABlocks.PARTICLE_ACCELERATOR_CORE, "particle_accelerator_core",
                 CPAPonderScenes::particleAcceleratorCoreScene, 
-                new ResourceLocation[]{AllCreatePonderTags.KINETIC_APPLIANCES});
+                AllCreatePonderTags.KINETIC_APPLIANCES);
     }
 }

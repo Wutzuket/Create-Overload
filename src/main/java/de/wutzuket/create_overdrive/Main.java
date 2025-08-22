@@ -1,17 +1,8 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package de.wutzuket.create_overdrive;
 
 import com.mojang.logging.LogUtils;
-import com.simibubi.create.AllFluids;
-import com.simibubi.create.AllFluids.TintedFluidType;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.foundation.data.CreateRegistrate;
-import com.simibubi.create.infrastructure.config.AllConfigs;
-import com.tterrag.registrate.builders.FluidBuilder;
 import com.tterrag.registrate.util.entry.FluidEntry;
 import de.wutzuket.create_overdrive.blocks.AcceleratorInput.AcceleratorinputBlock;
 import de.wutzuket.create_overdrive.blocks.AcceleratorInput.AcceleratorinputBlockEntity;
@@ -20,6 +11,7 @@ import de.wutzuket.create_overdrive.blocks.AcceleratorOutput.AcceleratorOutputBl
 import de.wutzuket.create_overdrive.blocks.FusionReactor.FusionReactorCoreBlock;
 import de.wutzuket.create_overdrive.blocks.FusionReactorInput.FusionReactorInputBlock;
 import de.wutzuket.create_overdrive.blocks.FusionReactorInput.FusionReactorInputBlockEntity;
+import de.wutzuket.create_overdrive.blocks.Ionator.IonatorBlock;
 import de.wutzuket.create_overdrive.blocks.ParticleAccelerator.AcceleratorStructure;
 import de.wutzuket.create_overdrive.blocks.ParticleAccelerator.ParticleAcceleratorCoreBlock;
 import de.wutzuket.create_overdrive.blocks.FusionReactor.Casing;
@@ -27,51 +19,40 @@ import de.wutzuket.create_overdrive.config.Config;
 import de.wutzuket.create_overdrive.index.CPABlockEntities;
 import de.wutzuket.create_overdrive.index.CPABlocks;
 import de.wutzuket.create_overdrive.index.CPAFluids;
+import de.wutzuket.create_overdrive.index.CPAPonders;
 import de.wutzuket.create_overdrive.particles.ModParticleTypes;
+import de.wutzuket.create_overdrive.ponder.CPAPonderPlugin;
 import de.wutzuket.create_overdrive.recipe.ModRecipes;
-import net.createmod.catnip.theme.Color;
-import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.dispenser.BlockSource;
-import net.minecraft.core.dispenser.DispenseItemBehavior;
+import net.createmod.ponder.foundation.PonderIndex;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig.Type;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.fluids.BaseFlowingFluid;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import org.joml.Vector3f;
 import org.slf4j.Logger;
-
-import java.util.function.Supplier;
 
 @Mod("create_overdrive")
 public class Main {
@@ -80,6 +61,7 @@ public class Main {
     public static CreateRegistrate REGISTRATE = CreateRegistrate.create("create_overdrive");
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks("create_overdrive");
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems("create_overdrive");
+
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS;
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS;
     public static final DeferredBlock<Block> PARTICLE_ACCELERATOR_CORE;
@@ -94,12 +76,16 @@ public class Main {
     public static final DeferredItem<BlockItem> FUSION_REACTOR_CORE_ITEM;
     public static final DeferredBlock<Block> FUSION_REACTOR_INPUT;
     public static final DeferredItem<BlockItem> FUSION_REACTOR_INPUT_ITEM;
-    public static final DeferredItem<BucketItem> FUSION_REACTOR_FUEL_BUCKET;
+    public static final DeferredBlock<Block> IONATOR;
+    public static final DeferredItem<BlockItem> IONATOR_ITEM;
+    public static DeferredItem<BucketItem> FUSION_REACTOR_FUEL_BUCKET;
+
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> PARTICLE_ACCELERATOR_TAB;
     public static int RADIUS;
     public static int BlockCountAccelerator;
 
     public Main(IEventBus modEventBus, ModContainer modContainer) {
+        modEventBus.addListener(this::doClientStuff);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(Main::addCreative);
         BLOCKS.register(modEventBus);
@@ -112,6 +98,7 @@ public class Main {
         updateConfigValues();
         CPABlockEntities.register();
         CPAFluids.register();
+
         ModParticleTypes.register(modEventBus);
         ModRecipes.register(modEventBus);
         modEventBus.addListener(this::registerCapabilities);
@@ -140,9 +127,18 @@ public class Main {
             event.accept((CPABlocks.FUSION_REACTOR_CASING));
             event.accept((CPABlocks.FUSION_REACTOR_CORE));
             event.accept((CPABlocks.FUSION_REACTOR_INPUT));
+            event.accept(CPABlocks.IONATOR);
             event.accept(FUSION_REACTOR_FUEL_BUCKET);
         }
 
+    }
+
+    public void doClientStuff(final FMLClientSetupEvent event) {
+        PonderIndex.addPlugin(new CPAPonderPlugin());
+
+        RenderType cutout = RenderType.cutoutMipped();
+
+        ItemBlockRenderTypes.setRenderLayer(CPABlocks.PARTICLE_ACCELERATOR_CORE.get(), cutout);
     }
 
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
@@ -166,12 +162,15 @@ public class Main {
         FUSION_REACTOR_CORE_ITEM = ITEMS.registerSimpleBlockItem("fusion_reactor_core", FUSION_REACTOR_CORE);
         FUSION_REACTOR_INPUT = BLOCKS.register("fusion_reactor_input", () -> new FusionReactorInputBlock(Properties.of().mapColor(MapColor.METAL).strength(3.5F)));
         FUSION_REACTOR_INPUT_ITEM = ITEMS.registerSimpleBlockItem("fusion_reactor_input", FUSION_REACTOR_INPUT);
+        IONATOR = BLOCKS.register("ionator", () -> new IonatorBlock(Properties.of().mapColor(MapColor.METAL).strength(3.5F)));
+        IONATOR_ITEM = ITEMS.registerSimpleBlockItem("ionator", IONATOR);
+        FUSION_REACTOR_FUEL_BUCKET = ITEMS.registerItem("fusion_reactor_fuel_bucket",
+            properties -> new BucketItem(CPAFluids.FUSIONREACTORFUEL.get(), properties.stacksTo(1).craftRemainder(Items.BUCKET))
+        );
 
-        FUSION_REACTOR_FUEL_BUCKET = ITEMS.register("fusion_reactor_fuel_bucket", () -> new BucketItem(CPAFluids.FUSIONREACTORFUEL.get(), new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
-
-        PARTICLE_ACCELERATOR_TAB = CREATIVE_MODE_TABS.register("create_overdrive_tab", () -> CreativeModeTab.builder().icon(() -> new ItemStack((ItemLike)PARTICLE_ACCELERATOR_CORE.get())).title(Component.translatable("itemGroup.create_overdrive_tab")).build());
+        PARTICLE_ACCELERATOR_TAB = CREATIVE_MODE_TABS.register("create_overdrive_tab", () -> CreativeModeTab.builder().icon(() -> new ItemStack(PARTICLE_ACCELERATOR_CORE.get())).title(Component.translatable("itemGroup.create_overdrive_tab")).build());
         RADIUS = 10;
     }
 
 
-    }
+}

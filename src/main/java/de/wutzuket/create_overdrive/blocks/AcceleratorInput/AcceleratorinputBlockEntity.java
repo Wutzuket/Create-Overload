@@ -5,11 +5,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -19,15 +17,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 public class AcceleratorinputBlockEntity extends BlockEntity implements Container {
-    public final ItemStackHandler items = new ItemStackHandler(2) {;
+    public final ItemStackHandler items = new ItemStackHandler(2) {
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
+            assert level != null;
             if (!level.isClientSide) {
                 level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
@@ -52,11 +51,11 @@ public class AcceleratorinputBlockEntity extends BlockEntity implements Containe
         return true;
     }
 
-    public ItemStack getItem(int slot) {
+    public @NotNull ItemStack getItem(int slot) {
         return this.items.getStackInSlot(slot);
     }
 
-    public ItemStack removeItem(int slot, int amount) {
+    public @NotNull ItemStack removeItem(int slot, int amount) {
         ItemStack stack = this.items.getStackInSlot(slot);
         if (!stack.isEmpty()) {
             ItemStack removed = stack.split(amount);
@@ -68,18 +67,18 @@ public class AcceleratorinputBlockEntity extends BlockEntity implements Containe
         }
     }
 
-    public ItemStack removeItemNoUpdate(int slot) {
+    public @NotNull ItemStack removeItemNoUpdate(int slot) {
         ItemStack stack = this.items.getStackInSlot(slot);
         this.items.setStackInSlot(slot, ItemStack.EMPTY);
         return stack;
     }
 
-    public void setItem(int slot, ItemStack stack) {
+    public void setItem(int slot, @NotNull ItemStack stack) {
         this.items.setStackInSlot(slot, stack);
         this.setChanged();
     }
 
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NotNull Player player) {
         return true;
     }
 
@@ -90,12 +89,12 @@ public class AcceleratorinputBlockEntity extends BlockEntity implements Containe
 
     }
 
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put("inventory", this.items.serializeNBT(registries));
     }
 
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.items.deserializeNBT(registries, tag.getCompound("inventory"));
     }
@@ -105,12 +104,12 @@ public class AcceleratorinputBlockEntity extends BlockEntity implements Containe
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+    public @NotNull CompoundTag getUpdateTag(@NotNull HolderLookup.Provider registries) {
         return super.getUpdateTag(registries);
     }
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(ItemHandler.BLOCK, (BlockEntityType) CPABlockEntities.ACCELERATOR_INPUT.get(), 
+        event.registerBlockEntity(ItemHandler.BLOCK, CPABlockEntities.ACCELERATOR_INPUT.get(),
             (be, context) -> context instanceof Direction && be instanceof AcceleratorinputBlockEntity inputBe ? inputBe.items : null);
     }
 

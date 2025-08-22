@@ -24,6 +24,15 @@ public class ModRecipes {
                     return "particle_accelerator";
                 }
             });
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<IonatorRecipe>> IONATOR_RECIPE_SERIALIZER =
+            SERIALIZERS.register("ionator", IonatorRecipe.Serializer::new);
+    public static final DeferredHolder<RecipeType<?>, RecipeType<IonatorRecipe>> IONATOR_RECIPE_TYPE =
+            TYPES.register("ionator", () -> new RecipeType<IonatorRecipe>() {
+                @Override
+                public String toString() {
+                    return "ionator";
+                }
+            });
 
 
     public static void register(IEventBus eventBus) {

@@ -5,6 +5,7 @@
   "block.create_overdrive.fusion_reactor_casing": "Fusion Reactor Casing",
   "block.create_overdrive.fusion_reactor_core": "Fusion Reactor Core",
   "block.create_overdrive.fusion_reactor_input": "Fusion Reactor Input",
+  "block.create_overdrive.ionator": "Ionator",
 
   "item.create_overdrive.particle_accelerator_core": "Particle Accelerator Core",
   "item.create_overdrive.particle_accelerator_input": "Particle Accelerator Input",
@@ -13,10 +14,13 @@
   "item.create_overdrive.fusion_reactor_core": "Fusion Reactor Core",
   "item.create_overdrive.fusion_reactor_input": "Fusion Reactor Input",
   "item.create_overdrive.fusion_reactor_fuel_bucket": "Fusion Reactor Fuel Bucket",
+  "item.create_overdrive.ionator": "Ionator",
 
   "fluid.create_overdrive.fusion_reactor_fuel": "Fusion Reactor Fuel",
 
   "JEI.create_overdrive.particle_accelerator_core": "Particle Accelerator",
+
+  "create.recipe.ionator": "Ionize",
 
   "itemGroup.create_overdrive_tab": "Particle Accelerator",
 

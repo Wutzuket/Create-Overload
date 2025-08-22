@@ -59,26 +59,17 @@ import net.neoforged.neoforge.fluids.FluidType;
 public class CPAFluids {
 	private static final CreateRegistrate REGISTRATE = Main.REGISTRATE;
 
-	public static final FluidEntry<BaseFlowingFluid.Flowing> FUSIONREACTORFUEL =
-		REGISTRATE.standardFluid("fusion_reactor_fuel",
-				// Nutzt jetzt direkt die Wasser-Texturen (TEST_USE_WATER_TEXTURES=true erzwingt das ohnehin)
-				SolidRenderedPlaceableFluidType.create(0x622020, () -> 1f / 32f))
-			.lang("Fusion Reactor Fuel")
-			.properties(b -> b.viscosity(1500)
-				.density(1400))
-			.fluidProperties(p -> p.levelDecreasePerBlock(2)
-				.tickRate(25)
-				.slopeFindDistance(3)
-				.explosionResistance(100f))
-			.source(BaseFlowingFluid.Source::new)
-			.block()
-			.properties(p -> p.mapColor(MapColor.TERRACOTTA_BROWN))
-			.build()
-			.bucket()
-			.onRegister(CPAFluids::registerFluidDispenseBehavior)
-			.tag(Tags.Items.BUCKETS, AllTags.commonItemTag("buckets/fusion_reactor_fuel"))
-			.build()
-			.register();
+    public static final FluidEntry<BaseFlowingFluid.Flowing> FUSIONREACTORFUEL =
+            REGISTRATE.standardFluid("fusion_reactor_fuel",
+                            SolidRenderedPlaceableFluidType.create(0x622020, () -> 1f / 32f))
+                    .lang("Fusion Reactor Fuel")
+                    .properties(b -> b.viscosity(1500).density(1400).temperature(350))
+                    .fluidProperties(p -> p.levelDecreasePerBlock(2).tickRate(25).slopeFindDistance(3).explosionResistance(100f))
+                    .source(BaseFlowingFluid.Source::new)
+                    .block()
+                    .properties(p -> p.mapColor(MapColor.TERRACOTTA_BROWN))
+                    .build()
+                    .register();
 
 	// Load this class
 
@@ -99,12 +90,27 @@ public class CPAFluids {
 				}
 			}
 		));
+
+		// Auch die "umgekehrte" Richtung registrieren: unser Fuel fließt in Lava
+		FluidInteractionRegistry.addInteraction(FUSIONREACTORFUEL.get().getFluidType(), new InteractionInformation(
+                NeoForgeMod.LAVA_TYPE.value(),
+			fluidState -> {
+				if (fluidState.isSource()) {
+					return Blocks.OBSIDIAN.defaultBlockState();
+				} else {
+					return AllPaletteStoneTypes.SCORIA.getBaseBlock()
+						.get()
+						.defaultBlockState();
+				}
+			}
+		));
 	}
 
 	@Nullable
 	public static BlockState getLavaInteraction(FluidState fluidState) {
 		Fluid fluid = fluidState.getType();
-		if (fluid.isSame(FUSIONREACTORFUEL.get()))
+		// Quelle UND Flusszustand vergleichen
+		if (fluid.isSame(FUSIONREACTORFUEL.get()) || fluid.isSame(FUSIONREACTORFUEL.getSource()))
 			return AllPaletteStoneTypes.SCORIA.getBaseBlock()
 				.get()
 				.defaultBlockState();
@@ -236,6 +242,11 @@ public class CPAFluids {
 			return 1f;
 		}
 
+		// Verhindert, dass das Fluid in "ultraWarm"-Dimensionen (z. B. Nether) sofort verdampft
+		@Override
+		public boolean isVaporizedOnPlacement(Level level, BlockPos pos, FluidStack stack) {
+			return false;
+		}
 	}
 
 	private static class SolidRenderedPlaceableFluidType extends TintedFluidType {

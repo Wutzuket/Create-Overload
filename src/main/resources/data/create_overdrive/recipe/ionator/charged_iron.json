@@ -1,0 +1,17 @@
+{
+  "type": "create_overdrive:ionator",
+  "processing_time": 200,
+  "heat_requirement": "superheated",
+  "ingredients": [
+    { "item": "minecraft:iron_ingot" },
+    {
+      "type": "fluid_stack",
+      "fluid": "minecraft:water",
+      "amount": 250
+    }
+  ],
+  "results": [
+    { "id": "minecraft:diamond", "count": 1 }
+  ]
+}
+
