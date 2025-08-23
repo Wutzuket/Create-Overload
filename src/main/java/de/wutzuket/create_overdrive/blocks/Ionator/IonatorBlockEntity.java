@@ -221,6 +221,13 @@ public class IonatorBlockEntity extends BasinOperatingBlockEntity {
     }
 
     @Override
+    public float calculateStressApplied() {
+        float impact = (float) (8192f/256f);
+        this.lastStressApplied = impact;
+        return impact;
+    }
+
+    @Override
     protected Object getRecipeCacheKey() {
         return shapelessOrIonatorRecipesKey;
     }

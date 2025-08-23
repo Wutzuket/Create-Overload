@@ -22,7 +22,7 @@
 
   "create.recipe.ionator": "Ionize",
 
-  "itemGroup.create_overdrive_tab": "Particle Accelerator",
+  "itemGroup.create_overdrive_tab": "Create Overdrive",
 
   "create_overdrive.ponder.particle_accelerator_core.header": "Building and Using the Particle Accelerator Core",
   "create_overdrive.ponder.particle_accelerator_core.text_1": "This is the Particle Accelerator Core. It is the heart of the machine.",

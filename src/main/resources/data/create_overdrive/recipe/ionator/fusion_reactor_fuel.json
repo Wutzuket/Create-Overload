@@ -1,17 +1,21 @@
 {
-  "type": "create:mixing",
-  "heat_requirement": "superheated",
+  "type": "create_overdrive:ionator",
+  "heat_requirement": "heated",
   "processing_time": 1,
   "ingredients": [
     {
       "type": "fluid_stack",
-      "amount": 100,
+      "amount": 500,
       "fluid": "minecraft:water"
+    },
+    {
+      "item": "minecraft:quartz"
     }
+
   ],
   "results": [
     {
-      "amount": 10,
+      "amount": 150,
       "id": "create_overdrive:fusion_reactor_fuel"
     }
   ]
