@@ -25,7 +25,7 @@ public class CPAPonderScenes {
 
     public static void particleAcceleratorCoreScene(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("particle_accelerator_core", "Aufbau und Verwendung des Particle Accelerator Core");
+        scene.title("particle_accelerator_core", "Building and Using the Particle Accelerator Core");
         scene.configureBasePlate(0, 0, 11);
         scene.world().showSection(util.select().layer(0), Direction.UP);
 
