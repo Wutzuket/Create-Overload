@@ -3,7 +3,11 @@ package de.wutzuket.create_overdrive;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.foundation.data.CreateRegistrate;
-import com.tterrag.registrate.util.entry.FluidEntry;
+import com.simibubi.create.foundation.data.SharedProperties;
+import com.simibubi.create.foundation.item.ItemDescription;
+import com.simibubi.create.foundation.item.KineticStats;
+import com.simibubi.create.foundation.item.TooltipModifier;
+import com.tterrag.registrate.util.entry.ItemEntry;
 import de.wutzuket.create_overdrive.blocks.AcceleratorInput.AcceleratorinputBlock;
 import de.wutzuket.create_overdrive.blocks.AcceleratorInput.AcceleratorinputBlockEntity;
 import de.wutzuket.create_overdrive.blocks.AcceleratorOutput.AcceleratorOutputBlock;
@@ -19,10 +23,10 @@ import de.wutzuket.create_overdrive.config.Config;
 import de.wutzuket.create_overdrive.index.CPABlockEntities;
 import de.wutzuket.create_overdrive.index.CPABlocks;
 import de.wutzuket.create_overdrive.index.CPAFluids;
-import de.wutzuket.create_overdrive.index.CPAPonders;
 import de.wutzuket.create_overdrive.particles.ModParticleTypes;
 import de.wutzuket.create_overdrive.ponder.CPAPonderPlugin;
 import de.wutzuket.create_overdrive.recipe.ModRecipes;
+import net.createmod.catnip.lang.FontHelper;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -31,7 +35,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraft.world.level.material.MapColor;
@@ -44,41 +47,36 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.slf4j.Logger;
 
+import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
+import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
+
 @Mod("create_overdrive")
 public class Main {
     public static final String MODID = "create_overdrive";
     private static final Logger LOGGER = LogUtils.getLogger();
-    public static CreateRegistrate REGISTRATE = CreateRegistrate.create("create_overdrive");
+
+    public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(Main.MODID)
+            .defaultCreativeTab((ResourceKey<CreativeModeTab>) null)
+            .setTooltipModifierFactory(item ->
+                    new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
+                            .andThen(TooltipModifier.mapNull(KineticStats.create(item)))
+            );;
+
+
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks("create_overdrive");
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems("create_overdrive");
 
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS;
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS;
-    public static final DeferredBlock<Block> PARTICLE_ACCELERATOR_CORE;
-    public static final DeferredItem<BlockItem> PARTICLE_ACCELERATOR_CORE_ITEM;
-    public static final DeferredBlock<Block> PARTICLE_ACCELERATOR_INPUT;
-    public static final DeferredItem<BlockItem> PARTICLE_ACCELERATOR_INPUT_ITEM;
-    public static final DeferredBlock<Block> PARTICLE_ACCELERATOR_OUTPUT;
-    public static final DeferredItem<BlockItem> PARTICLE_ACCELERATOR_OUTPUT_ITEM;
-    public static final DeferredBlock<Block> FUSION_REACTOR_CASING;
-    public static final DeferredItem<BlockItem> FUSION_REACTOR_CASING_ITEM;
-    public static final DeferredBlock<Block> FUSION_REACTOR_CORE;
-    public static final DeferredItem<BlockItem> FUSION_REACTOR_CORE_ITEM;
-    public static final DeferredBlock<Block> FUSION_REACTOR_INPUT;
-    public static final DeferredItem<BlockItem> FUSION_REACTOR_INPUT_ITEM;
-    public static final DeferredBlock<Block> IONATOR;
-    public static final DeferredItem<BlockItem> IONATOR_ITEM;
-    public static DeferredItem<BucketItem> FUSION_REACTOR_FUEL_BUCKET;
+    public static final DeferredItem<Item> STELLAR_STEEL_ALLOY;
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> PARTICLE_ACCELERATOR_TAB;
     public static int RADIUS;
@@ -91,13 +89,14 @@ public class Main {
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         RECIPE_SERIALIZERS.register(modEventBus);
-        CREATIVE_MODE_TABS.register(modEventBus);
         REGISTRATE.registerEventListeners(modEventBus);
         NeoForge.EVENT_BUS.register(this);
         modContainer.registerConfig(Type.COMMON, Config.SPEC);
         updateConfigValues();
         CPABlockEntities.register();
         CPAFluids.register();
+        CPABlocks.register();
+        CREATIVE_MODE_TABS.register(modEventBus);
 
         ModParticleTypes.register(modEventBus);
         ModRecipes.register(modEventBus);
@@ -121,14 +120,15 @@ public class Main {
     private static void addCreative(BuildCreativeModeTabContentsEvent event) {
         ResourceKey<CreativeModeTab> tabKey = event.getTabKey();
         if (tabKey.location().equals(PARTICLE_ACCELERATOR_TAB.getId())) {
-            event.accept(PARTICLE_ACCELERATOR_CORE);
+            event.accept(CPABlocks.PARTICLE_ACCELERATOR_CORE);
             event.accept(CPABlocks.ACCELERATOR_OUTPUT);
             event.accept(CPABlocks.ACCELERATOR_INPUT);
             event.accept((CPABlocks.FUSION_REACTOR_CASING));
             event.accept((CPABlocks.FUSION_REACTOR_CORE));
             event.accept((CPABlocks.FUSION_REACTOR_INPUT));
             event.accept(CPABlocks.IONATOR);
-            event.accept(FUSION_REACTOR_FUEL_BUCKET);
+            event.accept(CPAFluids.FUSIONREACTORFUEL.getBucket().get());
+            event.accept(STELLAR_STEEL_ALLOY);
         }
 
     }
@@ -150,25 +150,9 @@ public class Main {
     static {
         RECIPE_SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, "create_overdrive");
         CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, "create_overdrive");
-        PARTICLE_ACCELERATOR_CORE = BLOCKS.register("particle_accelerator_core", () -> new ParticleAcceleratorCoreBlock(Properties.of().mapColor(MapColor.METAL).strength(3.5F)));
-        PARTICLE_ACCELERATOR_CORE_ITEM = ITEMS.registerSimpleBlockItem("particle_accelerator_core", PARTICLE_ACCELERATOR_CORE);
-        PARTICLE_ACCELERATOR_INPUT = BLOCKS.register("particle_accelerator_input", () -> new AcceleratorinputBlock(Properties.of().mapColor(MapColor.METAL).strength(3.5F)));
-        PARTICLE_ACCELERATOR_INPUT_ITEM = ITEMS.registerSimpleBlockItem("particle_accelerator_input", PARTICLE_ACCELERATOR_INPUT);
-        PARTICLE_ACCELERATOR_OUTPUT = BLOCKS.register("particle_accelerator_output", () -> new AcceleratorOutputBlock(Properties.of().mapColor(MapColor.METAL).strength(3.5F)));
-        PARTICLE_ACCELERATOR_OUTPUT_ITEM = ITEMS.registerSimpleBlockItem("particle_accelerator_output", PARTICLE_ACCELERATOR_OUTPUT);
-        FUSION_REACTOR_CASING = BLOCKS.register("fusion_reactor_casing", () -> new Casing(Properties.of().mapColor(MapColor.METAL).strength(3.5F)));
-        FUSION_REACTOR_CASING_ITEM = ITEMS.registerSimpleBlockItem("fusion_reactor_casing", FUSION_REACTOR_CASING);
-        FUSION_REACTOR_CORE = BLOCKS.register("fusion_reactor_core", () -> new FusionReactorCoreBlock(Properties.of().mapColor(MapColor.METAL).strength(3.5F)));
-        FUSION_REACTOR_CORE_ITEM = ITEMS.registerSimpleBlockItem("fusion_reactor_core", FUSION_REACTOR_CORE);
-        FUSION_REACTOR_INPUT = BLOCKS.register("fusion_reactor_input", () -> new FusionReactorInputBlock(Properties.of().mapColor(MapColor.METAL).strength(3.5F)));
-        FUSION_REACTOR_INPUT_ITEM = ITEMS.registerSimpleBlockItem("fusion_reactor_input", FUSION_REACTOR_INPUT);
-        IONATOR = BLOCKS.register("ionator", () -> new IonatorBlock(Properties.of().mapColor(MapColor.METAL).strength(3.5F)));
-        IONATOR_ITEM = ITEMS.registerSimpleBlockItem("ionator", IONATOR);
-        FUSION_REACTOR_FUEL_BUCKET = ITEMS.registerItem("fusion_reactor_fuel_bucket",
-            properties -> new BucketItem(CPAFluids.FUSIONREACTORFUEL.get(), properties.stacksTo(1).craftRemainder(Items.BUCKET))
-        );
 
-        PARTICLE_ACCELERATOR_TAB = CREATIVE_MODE_TABS.register("create_overdrive_tab", () -> CreativeModeTab.builder().icon(() -> new ItemStack(PARTICLE_ACCELERATOR_CORE.get())).title(Component.translatable("itemGroup.create_overdrive_tab")).build());
+        STELLAR_STEEL_ALLOY = ITEMS.registerSimpleItem("stellar_steel_alloy");
+        PARTICLE_ACCELERATOR_TAB = CREATIVE_MODE_TABS.register("create_overdrive_tab", () -> net.minecraft.world.item.CreativeModeTab.builder().icon(() -> new net.minecraft.world.item.ItemStack(CPABlocks.PARTICLE_ACCELERATOR_CORE.get())).title(net.minecraft.network.chat.Component.translatable("itemGroup.create_overdrive_tab")).build());
         RADIUS = 10;
     }
 

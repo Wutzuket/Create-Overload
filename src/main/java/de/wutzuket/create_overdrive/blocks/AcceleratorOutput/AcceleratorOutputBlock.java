@@ -1,5 +1,6 @@
 package de.wutzuket.create_overdrive.blocks.AcceleratorOutput;
 
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import de.wutzuket.create_overdrive.index.CPABlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-public class AcceleratorOutputBlock extends Block implements EntityBlock {
+public class AcceleratorOutputBlock extends Block implements EntityBlock, IWrenchable {
     public AcceleratorOutputBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }

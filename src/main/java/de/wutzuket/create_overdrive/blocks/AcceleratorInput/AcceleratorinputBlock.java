@@ -1,5 +1,6 @@
 package de.wutzuket.create_overdrive.blocks.AcceleratorInput;
 
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import de.wutzuket.create_overdrive.index.CPABlockEntities;
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +20,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
-public class AcceleratorinputBlock extends Block implements EntityBlock {
+public class AcceleratorinputBlock extends Block implements EntityBlock, IWrenchable {
     public AcceleratorinputBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }

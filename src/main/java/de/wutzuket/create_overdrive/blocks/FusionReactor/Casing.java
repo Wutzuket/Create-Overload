@@ -1,5 +1,6 @@
 package de.wutzuket.create_overdrive.blocks.FusionReactor;
 
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +18,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.Collections;
 import java.util.List;
 
-public class Casing extends Block {
+public class Casing extends Block implements IWrenchable {
     public Casing(BlockBehaviour.Properties properties) {
         super(properties);
     }

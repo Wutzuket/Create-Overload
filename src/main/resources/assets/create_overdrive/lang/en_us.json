@@ -15,6 +15,7 @@
   "item.create_overdrive.fusion_reactor_input": "Fusion Reactor Input",
   "item.create_overdrive.fusion_reactor_fuel_bucket": "Fusion Reactor Fuel Bucket",
   "item.create_overdrive.ionator": "Ionator",
+  "item.create_overdrive.stellar_steel_alloy": "Stellar Steel Alloy",
 
   "fluid.create_overdrive.fusion_reactor_fuel": "Fusion Reactor Fuel",
 
@@ -41,7 +42,7 @@
   "create_overdrive.ponder.fusion_reactor.text_1": "The Fusion Reactor is build by multiple layers",
   "create_overdrive.ponder.fusion_reactor.text_2": "Through the Input block, you insert Fusion Fuel",
   "create_overdrive.ponder.fusion_reactor.text_3": "At the bottom of the core you can adjust the Burn Rate",
-    "create_overdrive.ponder.fusion_reactor.text_4": "The higher the Burn Rate, the more stress is generated",
+  "create_overdrive.ponder.fusion_reactor.text_4": "The higher the Burn Rate, the more stress is generated",
 
   "create_overdrive.gui.burnrate.title": "Burn rate"
 }

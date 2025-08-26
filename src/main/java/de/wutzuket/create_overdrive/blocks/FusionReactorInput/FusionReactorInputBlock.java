@@ -33,4 +33,12 @@ public class FusionReactorInputBlock extends Block implements IWrenchable, IBE<F
     public BlockEntityType<? extends FusionReactorInputBlockEntity> getBlockEntityType() {
         return CPABlockEntities.FUSION_REACTOR_INPUT.get();
     }
+
+    @Override
+    public java.util.List<net.minecraft.world.item.ItemStack> getDrops(BlockState state, net.minecraft.world.level.storage.loot.LootParams.Builder builder) {
+        java.util.List<net.minecraft.world.item.ItemStack> dropsOriginal = super.getDrops(state, builder);
+        if (!dropsOriginal.isEmpty())
+            return dropsOriginal;
+        return java.util.Collections.singletonList(new net.minecraft.world.item.ItemStack(this, 1));
+    }
 }
