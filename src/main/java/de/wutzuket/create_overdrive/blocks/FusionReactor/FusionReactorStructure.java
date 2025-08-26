@@ -24,6 +24,9 @@ public class FusionReactorStructure {
     private final Level level;
     private final FusionReactorCoreBlockEntity coreBlockEntity;
     private List<BlockPos> inputBlockPositions = new ArrayList<>();
+    public List<BlockPos> CasingPositions = new ArrayList<>();
+    public List<BlockPos> InputGhostPositions = new ArrayList<>(); // Neue Liste für Input-Ghost-Blöcke
+
 
     public FusionReactorStructure(Level level, FusionReactorCoreBlockEntity coreBlockEntity) {
         this.level = level;
@@ -39,6 +42,8 @@ public class FusionReactorStructure {
         boolean layer3 = false;
 
         inputBlockPositions.clear(); // Clear previous positions
+        CasingPositions.clear(); // Leere die Liste am Anfang jeder Strukturprüfung
+        InputGhostPositions.clear(); // Leere auch die Input-Ghost-Liste
 
         if (!layer1){
             for (int i = -2; i <= 3; i++) {
@@ -93,6 +98,7 @@ public class FusionReactorStructure {
         }
 
         boolean structureValid = layer3 && inputBlockCount >= 1;
+
 
         if (structureValid) {
             if (!coreBlockEntity.wasJustAssembled()) {
@@ -165,11 +171,13 @@ public class FusionReactorStructure {
         BlockState state = level.getBlockState(pos);
         if (state.is(CPABlocks.FUSION_REACTOR_CASING.get())) {
             return 1;
-        } else if (!state.is(CPABlocks.ACCELERATOR_INPUT.get()) && !state.is(CPABlocks.ACCELERATOR_OUTPUT.get())) {
-            showFusionReactorCasingParticles(pos);
+        } else {
+            // Füge Position hinzu wenn der Block NICHT vorhanden ist
+            BlockPos offset = pos.subtract(coreBlockEntity.getBlockPos());
+            CasingPositions.add(offset);
+            System.out.println("Added missing casing at offset: " + offset + " (world pos: " + pos + ")");
             return 0;
         }
-        return 0;
     }
 
     private void showEndRodParticles(BlockPos pos) {
@@ -250,11 +258,20 @@ public class FusionReactorStructure {
             return 1;
         } else if (state.is(CPABlocks.FUSION_REACTOR_INPUT.get())) {
             return 1; // Input-Block zählt als gültiger Block
-        } else if (!state.is(CPABlocks.ACCELERATOR_INPUT.get()) && !state.is(CPABlocks.ACCELERATOR_OUTPUT.get())) {
-            showFusionReactorCasingParticles(pos);
+        } else {
+            // Weder Casing noch Input vorhanden: Zeige beide Ghosts!
+            BlockPos offset = pos.subtract(coreBlockEntity.getBlockPos());
+            CasingPositions.add(offset);
+            if (inputBlockPositions.size() == 0) {
+                InputGhostPositions.add(offset);
+            }
             return 0;
         }
-        return 0;
+    }
+
+    // Hilfsmethode um zu prüfen ob bereits Input-Blöcke existieren
+    private boolean hasAnyInputBlocks() {
+        return !inputBlockPositions.isEmpty();
     }
 
     private int countInputBlocks(BlockPos pos) {

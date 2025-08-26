@@ -1,0 +1,16 @@
+{
+  "type": "create_overdrive:ionator",
+  "ingredients": [
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "minecraft:copper_ingot"
+    }
+  ],
+  "results": [
+    {
+      "id": "minecraft:gold_nugget", "count": 1
+    }
+  ]
+}

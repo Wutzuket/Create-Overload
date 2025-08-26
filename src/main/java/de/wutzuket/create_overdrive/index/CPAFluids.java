@@ -6,8 +6,6 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
-import com.simibubi.create.AllCreativeModeTabs;
-import com.simibubi.create.AllTags;
 import com.simibubi.create.Create;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
@@ -15,11 +13,7 @@ import org.joml.Vector3f;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
-import com.simibubi.create.content.fluids.VirtualFluid;
-import com.simibubi.create.content.fluids.potion.PotionFluid;
-import com.simibubi.create.content.fluids.potion.PotionFluid.PotionFluidType;
 import com.simibubi.create.foundation.data.CreateRegistrate;
-import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.tterrag.registrate.builders.FluidBuilder.FluidTypeFactory;
 import com.tterrag.registrate.util.entry.FluidEntry;
 
@@ -48,7 +42,6 @@ import net.minecraft.world.level.material.MapColor;
 
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.common.NeoForgeMod;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import net.neoforged.neoforge.fluids.FluidInteractionRegistry;
 import net.neoforged.neoforge.fluids.FluidInteractionRegistry.InteractionInformation;

@@ -113,9 +113,9 @@ public class CPAPonderScenes {
         BlockPos pressPos = util.grid().at(1, 4, 2);
         Vec3 basinSide = util.vector().blockSurface(basin, Direction.WEST);
 
-        ItemStack blue = new ItemStack(Items.BLUE_DYE);
-        ItemStack red = new ItemStack(Items.RED_DYE);
-        ItemStack purple = new ItemStack(Items.PURPLE_DYE);
+        ItemStack iron = new ItemStack(Items.IRON_INGOT);
+        ItemStack copper = new ItemStack(Items.COPPER_INGOT);
+        ItemStack gold = new ItemStack(Items.GOLD_NUGGET);
 
         scene.overlay().showText(60)
                 .pointAt(basinSide)
@@ -124,28 +124,23 @@ public class CPAPonderScenes {
                 .text("With a Ionator and Basin, some Crafting Recipes can be automated");
         scene.idle(40);
 
-        scene.overlay().showControls(util.vector().topOf(basin), Pointing.LEFT, 30).withItem(blue);
-        scene.overlay().showControls(util.vector().topOf(basin), Pointing.RIGHT, 30).withItem(red);
+        scene.overlay().showControls(util.vector().topOf(basin), Pointing.LEFT, 30).withItem(iron);
+        scene.overlay().showControls(util.vector().topOf(basin), Pointing.RIGHT, 30).withItem(copper);
         scene.idle(30);
         Class<IonatorBlockEntity> type = IonatorBlockEntity.class;
-        scene.world().modifyBlockEntity(pressPos, type, pte -> pte.startProcessingBasin());
-        scene.world().createItemOnBeltLike(basin, Direction.UP, red);
-        scene.world().createItemOnBeltLike(basin, Direction.UP, blue);
+        scene.world().modifyBlockEntity(pressPos, type, IonatorBlockEntity::startProcessingBasin);
+        scene.world().createItemOnBeltLike(basin, Direction.UP, copper);
+        scene.world().createItemOnBeltLike(basin, Direction.UP, iron);
         scene.idle(80);
         scene.world().modifyBlockEntityNBT(util.select().position(basin), BasinBlockEntity.class, nbt -> {
             nbt.put("VisualizedItems",
-                    NBTHelper.writeCompoundList(ImmutableList.of(IntAttached.with(1, purple)), ia -> (CompoundTag) ia.getValue().saveOptional(scene.world().getHolderLookupProvider())));
+                    NBTHelper.writeCompoundList(ImmutableList.of(IntAttached.with(1, gold)), ia -> (CompoundTag) ia.getValue().saveOptional(scene.world().getHolderLookupProvider())));
         });
         scene.idle(4);
-        scene.world().createItemOnBelt(util.grid().at(1, 1, 1), Direction.UP, purple);
+        scene.world().createItemOnBelt(util.grid().at(1, 1, 1), Direction.UP, gold);
         scene.idle(30);
 
-        scene.overlay().showText(80)
-                .pointAt(basinSide)
-                .placeNearTarget()
-                .attachKeyFrame()
-                .text("Available recipes include any Shapeless Crafting Recipe, plus a couple extra ones");
-        scene.idle(80);
+
 
         scene.rotateCameraY(-30);
         scene.idle(10);

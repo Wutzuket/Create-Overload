@@ -1,5 +1,6 @@
 package de.wutzuket.create_overdrive.blocks.FusionReactor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.simibubi.create.AllBlocks;
@@ -36,6 +37,9 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
     private boolean first = true;
 
     private FusionReactorStructure structure;
+
+    public List<BlockPos> casing_render = new ArrayList<>();
+    public List<BlockPos> input_render = new ArrayList<>(); // Neue Liste für Input-Ghost-Blöcke
 
     public FusionReactorCoreBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -101,6 +105,26 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
         tag.putBoolean("First", first);
         tag.putString("RequiredFluid",
             BuiltInRegistries.FLUID.getKey(requiredFluid).toString());
+
+        // Synchronisiere casing_render Liste für Client
+        if (clientPacket) {
+            CompoundTag casingTag = new CompoundTag();
+            for (int i = 0; i < casing_render.size(); i++) {
+                BlockPos pos = casing_render.get(i);
+                casingTag.putLong("pos_" + i, pos.asLong());
+            }
+            casingTag.putInt("size", casing_render.size());
+            tag.put("CasingRender", casingTag);
+
+            // Synchronisiere input_render Liste für Client
+            CompoundTag inputTag = new CompoundTag();
+            for (int i = 0; i < input_render.size(); i++) {
+                BlockPos pos = input_render.get(i);
+                inputTag.putLong("pos_" + i, pos.asLong());
+            }
+            inputTag.putInt("size", input_render.size());
+            tag.put("InputRender", inputTag);
+        }
     }
 
     @Override
@@ -110,7 +134,8 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
         wasJustAssembled = tag.getBoolean("WasJustAssembled");
         burnrate = tag.getFloat("Burnrate");
         first = tag.getBoolean("First");
-        // Fluid aus NBT laden (optional, standardmäßig Wasser)
+
+        // Fluid aus NBT laden
         if (tag.contains("RequiredFluid")) {
             try {
                 ResourceLocation rl = ResourceLocation.parse(tag.getString("RequiredFluid"));
@@ -118,6 +143,32 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
                 if (loaded != null && loaded != Fluids.EMPTY)
                     requiredFluid = loaded;
             } catch (Exception ignored) {
+            }
+        }
+
+        // Lade casing_render Liste für Client
+        if (clientPacket && tag.contains("CasingRender")) {
+            CompoundTag casingTag = tag.getCompound("CasingRender");
+            int size = casingTag.getInt("size");
+            casing_render.clear();
+            for (int i = 0; i < size; i++) {
+                if (casingTag.contains("pos_" + i)) {
+                    BlockPos pos = BlockPos.of(casingTag.getLong("pos_" + i));
+                    casing_render.add(pos);
+                }
+            }
+        }
+
+        // Lade input_render Liste für Client
+        if (clientPacket && tag.contains("InputRender")) {
+            CompoundTag inputTag = tag.getCompound("InputRender");
+            int size = inputTag.getInt("size");
+            input_render.clear();
+            for (int i = 0; i < size; i++) {
+                if (inputTag.contains("pos_" + i)) {
+                    BlockPos pos = BlockPos.of(inputTag.getLong("pos_" + i));
+                    input_render.add(pos);
+                }
             }
         }
     }
@@ -138,6 +189,27 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
             }
 
             boolean structureValid = structure.checkStructure();
+            List<BlockPos> oldCasingRender = new ArrayList<>(casing_render);
+            List<BlockPos> oldInputRender = new ArrayList<>(input_render);
+
+            // Kopiere die Ghost-Block-Positionen nur wenn die Struktur unvollständig ist
+            if (!structureValid) {
+                casing_render = new ArrayList<>(structure.CasingPositions);
+                input_render = new ArrayList<>(structure.InputGhostPositions);
+                System.out.println("Server: Setting " + casing_render.size() + " casing render positions");
+                System.out.println("Server: Setting " + input_render.size() + " input render positions");
+            } else {
+                casing_render.clear(); // Lösche Ghost-Blöcke wenn Struktur vollständig ist
+                input_render.clear();
+                System.out.println("Server: Clearing casing and input render positions");
+            }
+
+            // Synchronisiere mit Client wenn sich etwas geändert hat
+            if (!oldCasingRender.equals(casing_render) || !oldInputRender.equals(input_render)) {
+                System.out.println("Server: Notifying client of render changes");
+                notifyUpdate();
+            }
+
             boolean hasFluid = structureValid && structure.consumeFluidFromInputs(burnrate, requiredFluid);
             boolean isValid = structureValid && burnrate > 0 && hasFluid;
 
