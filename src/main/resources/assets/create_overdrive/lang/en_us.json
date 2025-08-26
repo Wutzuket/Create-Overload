@@ -37,5 +37,11 @@
   "create_overdrive.ponder.ionator.text_2": "Some of those recipes may require the heat of a Blaze Burner",
   "create_overdrive.ponder.ionator.text_3": "The filter slot can be used in case two recipes are conflicting.",
 
+  "create_overdrive.ponder.fusion_reactor.header": "Building and Using the Fusion Reactor",
+  "create_overdrive.ponder.fusion_reactor.text_1": "The Fusion Reactor is build by multiple layers",
+  "create_overdrive.ponder.fusion_reactor.text_2": "Through the Input block, you insert Fusion Fuel",
+  "create_overdrive.ponder.fusion_reactor.text_3": "At the bottom of the core you can adjust the Burn Rate",
+    "create_overdrive.ponder.fusion_reactor.text_4": "The higher the Burn Rate, the more stress is generated",
+
   "create_overdrive.gui.burnrate.title": "Burn rate"
 }

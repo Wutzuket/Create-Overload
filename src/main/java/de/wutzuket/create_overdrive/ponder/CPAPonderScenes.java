@@ -2,21 +2,28 @@ package de.wutzuket.create_overdrive.ponder;
 
 import com.google.common.collect.ImmutableList;
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.content.kinetics.gauge.SpeedGaugeBlockEntity;
+import com.simibubi.create.content.kinetics.gauge.StressGaugeBlockEntity;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
+import de.wutzuket.create_overdrive.blocks.FusionReactor.FusionReactorCoreBlockEntity;
 import de.wutzuket.create_overdrive.blocks.Ionator.IonatorBlockEntity;
 import net.createmod.catnip.data.IntAttached;
 import net.createmod.catnip.math.Pointing;
 import net.createmod.catnip.nbt.NBTHelper;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
+import net.createmod.ponder.api.scene.Selection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.function.UnaryOperator;
 
 public class CPAPonderScenes {
     public CPAPonderScenes(){
@@ -166,4 +173,96 @@ public class CPAPonderScenes {
                 .text("The filter slot can be used in case two recipes are conflicting.");
         scene.idle(80);
     }
+
+    public static void fusionReactorCore(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("fusion_reactor", "Building and Using the Fusion Reactor");
+        scene.configureBasePlate(0, 0, 11);
+        scene.world().showSection(util.select().layer(0), Direction.UP);
+
+        BlockPos corePos = util.grid().at(5, 3, 5);
+        BlockPos inputPos = util.grid().at(0, 2, 4);
+
+        scene.world().showSection(util.select().position(corePos), Direction.DOWN);
+        scene.idle(10);
+
+        for (int i = -2; i <= 3; i++) {
+            scene.world().showSection(util.select().position(corePos.getX() + i, corePos.getY() - 1, corePos.getZ() + 3), Direction.DOWN);
+            scene.world().showSection(util.select().position(corePos.getX() - i, corePos.getY() - 1, corePos.getZ() - 3), Direction.DOWN);
+            scene.world().showSection(util.select().position(corePos.getX() + 3, corePos.getY() - 1, corePos.getZ() - i), Direction.DOWN);
+            scene.world().showSection(util.select().position(corePos.getX() - 3, corePos.getY() - 1, corePos.getZ() + i), Direction.DOWN);
+        }
+
+        scene.overlay().showText(60)
+                .pointAt(util.vector().topOf(corePos))
+                .placeNearTarget()
+                .attachKeyFrame()
+                .text("The Fusion Reactor is build by multiple layers");
+        scene.idle(10);
+
+        // Äußerer Ring
+        for (int i = -3; i <= 4; i++) {
+            scene.world().showSection(util.select().position(corePos.getX() + i, corePos.getY(), corePos.getZ() + 4), Direction.DOWN);
+            scene.world().showSection(util.select().position(corePos.getX() - i, corePos.getY(), corePos.getZ() - 4), Direction.DOWN);
+            scene.world().showSection(util.select().position(corePos.getX() + 4, corePos.getY(), corePos.getZ() - i), Direction.DOWN);
+            scene.world().showSection(util.select().position(corePos.getX() - 4, corePos.getY(), corePos.getZ() + i), Direction.DOWN);
+        }
+
+        // Innerer Ring
+        for (int i = -1; i <= 2; i++) {
+            scene.world().showSection(util.select().position(corePos.getX() + i, corePos.getY(), corePos.getZ() + 2), Direction.DOWN);
+            scene.world().showSection(util.select().position(corePos.getX() - i, corePos.getY(), corePos.getZ() - 2), Direction.DOWN);
+            scene.world().showSection(util.select().position(corePos.getX() + 2, corePos.getY(), corePos.getZ() - i), Direction.DOWN);
+            scene.world().showSection(util.select().position(corePos.getX() - 2, corePos.getY(), corePos.getZ() + i), Direction.DOWN);
+        }
+
+        // Mitte vom inneren Ring
+        scene.world().showSection(util.select().position(corePos.getX() + 1, corePos.getY(), corePos.getZ()), Direction.DOWN);
+        scene.world().showSection(util.select().position(corePos.getX() - 1, corePos.getY(), corePos.getZ()), Direction.DOWN);
+        scene.world().showSection(util.select().position(corePos.getX(), corePos.getY(), corePos.getZ() - 1), Direction.DOWN);
+        scene.world().showSection(util.select().position(corePos.getX(), corePos.getY(), corePos.getZ() + 1), Direction.DOWN);
+
+        scene.idle(10);
+
+        for (int i = -2; i <= 3; i++) {
+            scene.world().showSection(util.select().position(corePos.getX() + i, corePos.getY() + 1, corePos.getZ() + 3), Direction.DOWN);
+            scene.world().showSection(util.select().position(corePos.getX() - i, corePos.getY() + 1, corePos.getZ() - 3), Direction.DOWN);
+            scene.world().showSection(util.select().position(corePos.getX() + 3, corePos.getY() + 1, corePos.getZ() - i), Direction.DOWN);
+            scene.world().showSection(util.select().position(corePos.getX() - 3, corePos.getY() + 1, corePos.getZ() + i), Direction.DOWN);
+        }
+
+        scene.overlay().showText(40)
+                .pointAt(util.vector().topOf(inputPos))
+                .placeNearTarget()
+                .attachKeyFrame()
+                .text("Through the Input block, you insert Fusion Fuel");
+
+        scene.idle(40);
+
+        scene.world().showSection(util.select().position(corePos.above(1)), Direction.DOWN);
+        scene.world().showSection(util.select().position(corePos.above(2)), Direction.DOWN);
+
+        scene.idle(40);
+
+        scene.overlay().showText(60)
+                .pointAt(util.vector().topOf(corePos))
+                .placeNearTarget()
+                .text("At the bottom of the core you can adjust the Burn Rate");
+
+        scene.idle(20);
+
+        scene.world().modifyBlockEntityNBT(util.select().position(corePos.above(2)), StressGaugeBlockEntity.class,
+                nbt -> nbt.putFloat("Value", .25f));
+
+        scene.overlay().showText(40)
+                .pointAt(util.vector().topOf(corePos.above(2)))
+                .placeNearTarget()
+                .attachKeyFrame()
+                .text("The higher the Burn Rate, the more stress is generated");
+
+        scene.idle(40);
+
+    }
+
+
 }

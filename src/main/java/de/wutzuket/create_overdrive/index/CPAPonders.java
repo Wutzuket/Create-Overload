@@ -29,5 +29,8 @@ public class CPAPonders {
 
         HELPER.forComponents(AllBlocks.BASIN).addStoryBoard("ionator",
                 CPAPonderScenes::ionize);
+
+        HELPER.addStoryBoard(CPABlocks.FUSION_REACTOR_CORE, "fusion_reactor",
+                CPAPonderScenes::fusionReactorCore);
     }
 }
