@@ -1,0 +1,33 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": false,
+  "key": {
+    "A": {
+      "item": "create_overdrive:fusion_reactor_casing"
+    },
+    "B": {
+      "item": "create:railway_casing"
+    },
+    "C": {
+      "item": "minecraft:netherite_block"
+    },
+    "P": {
+      "item": "create:precision_mechanism"
+    },
+    "S": {
+      "item": "minecraft:nether_star"
+    }
+  },
+  "pattern": [
+    " ABA ",
+    "ACPCA",
+    "BPSPB",
+    "ACPCA",
+    " ABA "
+  ],
+  "result": {
+    "count": 1,
+    "id": "create_overdrive:fusion_reactor_core"
+  },
+  "show_notification": false
+}

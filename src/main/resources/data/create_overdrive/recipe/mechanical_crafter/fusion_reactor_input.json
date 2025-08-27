@@ -1,0 +1,27 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": false,
+  "key": {
+    "A": {
+      "item": "create_overdrive:fusion_reactor_casing"
+    },
+    "P": {
+      "item": "create:mechanical_pump"
+    },
+    "S": {
+      "item": "create:fluid_tank"
+    }
+  },
+  "pattern": [
+    " AAA ",
+    "AAPAA",
+    "APSPA",
+    "AAPAA",
+    " AAA "
+  ],
+  "result": {
+    "count": 1,
+    "id": "create_overdrive:fusion_reactor_input"
+  },
+  "show_notification": false
+}

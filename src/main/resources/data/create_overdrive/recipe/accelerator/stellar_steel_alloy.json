@@ -1,0 +1,15 @@
+{
+  "type": "create_overdrive:particle_accelerator",
+  "ingredients": [
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "minecraft:netherite_ingot"
+    }
+  ],
+  "result": {
+    "id": "create_overdrive:stellar_steel_alloy",
+    "count": 1
+  }
+}

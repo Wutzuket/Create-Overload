@@ -1,6 +1,5 @@
 {
   "type": "create_overdrive:particle_accelerator",
-  "category": "misc",
   "ingredients": [
     {
       "item": "minecraft:iron_block"
