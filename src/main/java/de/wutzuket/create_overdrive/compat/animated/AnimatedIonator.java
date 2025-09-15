@@ -20,7 +20,7 @@ public class AnimatedIonator extends AnimatedKinetics {
 
         blockElement(cogwheel())
                 .rotateBlock(0, getCurrentAngle() * 2, 0)
-                .atLocal(0, 0, 0)
+                .atLocal(0, -0.25, 0)
                 .scale(scale)
                 .render(graphics);
 

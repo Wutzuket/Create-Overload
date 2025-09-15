@@ -1,24 +1,14 @@
 package de.wutzuket.create_overdrive;
 
 import com.mojang.logging.LogUtils;
-import com.simibubi.create.AllTags;
 import com.simibubi.create.foundation.data.CreateRegistrate;
-import com.simibubi.create.foundation.data.SharedProperties;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.KineticStats;
 import com.simibubi.create.foundation.item.TooltipModifier;
-import com.tterrag.registrate.util.entry.ItemEntry;
-import de.wutzuket.create_overdrive.blocks.AcceleratorInput.AcceleratorinputBlock;
 import de.wutzuket.create_overdrive.blocks.AcceleratorInput.AcceleratorinputBlockEntity;
-import de.wutzuket.create_overdrive.blocks.AcceleratorOutput.AcceleratorOutputBlock;
 import de.wutzuket.create_overdrive.blocks.AcceleratorOutput.AcceleratorOutputBlockEntity;
-import de.wutzuket.create_overdrive.blocks.FusionReactor.FusionReactorCoreBlock;
-import de.wutzuket.create_overdrive.blocks.FusionReactorInput.FusionReactorInputBlock;
 import de.wutzuket.create_overdrive.blocks.FusionReactorInput.FusionReactorInputBlockEntity;
-import de.wutzuket.create_overdrive.blocks.Ionator.IonatorBlock;
 import de.wutzuket.create_overdrive.blocks.ParticleAccelerator.AcceleratorStructure;
-import de.wutzuket.create_overdrive.blocks.ParticleAccelerator.ParticleAcceleratorCoreBlock;
-import de.wutzuket.create_overdrive.blocks.FusionReactor.Casing;
 import de.wutzuket.create_overdrive.config.Config;
 import de.wutzuket.create_overdrive.index.CPABlockEntities;
 import de.wutzuket.create_overdrive.index.CPABlocks;
@@ -31,13 +21,9 @@ import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -49,14 +35,10 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.slf4j.Logger;
-
-import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
-import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
 
 @Mod("create_overdrive")
 public class Main {
@@ -83,24 +65,24 @@ public class Main {
     public static int BlockCountAccelerator;
 
     public Main(IEventBus modEventBus, ModContainer modContainer) {
-        modEventBus.addListener(this::doClientStuff);
-        modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(Main::addCreative);
-        BLOCKS.register(modEventBus);
-        ITEMS.register(modEventBus);
-        RECIPE_SERIALIZERS.register(modEventBus);
+        // Registrierung zuerst
         REGISTRATE.registerEventListeners(modEventBus);
-        NeoForge.EVENT_BUS.register(this);
-        modContainer.registerConfig(Type.COMMON, Config.SPEC);
-        updateConfigValues();
         CPABlockEntities.register();
         CPAFluids.register();
         CPABlocks.register();
         CREATIVE_MODE_TABS.register(modEventBus);
-
+        BLOCKS.register(modEventBus);
+        ITEMS.register(modEventBus);
+        RECIPE_SERIALIZERS.register(modEventBus);
         ModParticleTypes.register(modEventBus);
         ModRecipes.register(modEventBus);
         modEventBus.addListener(this::registerCapabilities);
+        NeoForge.EVENT_BUS.register(this);
+        modContainer.registerConfig(Type.COMMON, Config.SPEC);
+        updateConfigValues();
+        // Listener zuletzt registrieren
+        modEventBus.addListener(Main::addCreative);
+        modEventBus.addListener(this::doClientStuff);
     }
 
     public static void updateConfigValues() {
