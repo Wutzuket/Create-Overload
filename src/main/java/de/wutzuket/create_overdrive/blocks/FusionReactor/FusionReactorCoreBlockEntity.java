@@ -10,7 +10,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.CenteredSideValueBox
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
 
 import de.wutzuket.create_overdrive.index.CPAFluids;
-import de.wutzuket.create_overdrive.util.StressScrollValueBehaviour;
+import de.wutzuket.create_overdrive.util.BurnrateScrollValueBehaviour;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -55,7 +55,7 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
         CenteredSideValueBoxTransform burnrateSlot =
             new CenteredSideValueBoxTransform((reactor, side) -> side == Direction.DOWN);
 
-        burnrateCapacity = new StressScrollValueBehaviour(Component.translatable("create_overdrive.gui.burnrate.title"), this, burnrateSlot);
+        burnrateCapacity = new BurnrateScrollValueBehaviour(Component.translatable("create_overdrive.gui.burnrate.title"), this, burnrateSlot);
         burnrateCapacity.between(0, 100);
         burnrateCapacity.value = 50;
         burnrateCapacity.withCallback(this::updateBurnrate);

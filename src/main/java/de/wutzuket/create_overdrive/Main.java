@@ -111,6 +111,7 @@ public class Main {
             event.accept(CPABlocks.IONATOR);
             event.accept(CPAFluids.FUSIONREACTORFUEL.getBucket().get());
             event.accept(STELLAR_STEEL_ALLOY);
+            event.accept(CPABlocks.ROTATOR_CASING);
         }
 
     }

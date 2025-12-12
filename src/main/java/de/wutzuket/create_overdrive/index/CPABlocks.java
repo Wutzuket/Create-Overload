@@ -10,6 +10,7 @@ import de.wutzuket.create_overdrive.blocks.FusionReactor.FusionReactorCoreBlock;
 import de.wutzuket.create_overdrive.blocks.FusionReactorInput.FusionReactorInputBlock;
 import de.wutzuket.create_overdrive.blocks.Ionator.IonatorBlock;
 import de.wutzuket.create_overdrive.blocks.ParticleAccelerator.ParticleAcceleratorCoreBlock;
+import de.wutzuket.create_overdrive.blocks.Rotator.RotatorCasing;
 
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
@@ -23,6 +24,7 @@ public class CPABlocks {
     public static BlockEntry<FusionReactorCoreBlock> FUSION_REACTOR_CORE;
     public static BlockEntry<FusionReactorInputBlock> FUSION_REACTOR_INPUT;
     public static BlockEntry<IonatorBlock> IONATOR;
+    public static BlockEntry<RotatorCasing> ROTATOR_CASING;
 
     public CPABlocks() {
     }
@@ -87,6 +89,15 @@ public class CPABlocks {
                 .register();
         IONATOR = REGISTRATE
                 .block("ionator", IonatorBlock::new)
+                .initialProperties(SharedProperties::stone)
+                .properties(p -> p.strength(1.5f, 6.0f))
+                .tag(AllBlockTags.SAFE_NBT.tag)
+                .transform(axeOrPickaxe())
+                .item()
+                .transform(customItemModel())
+                .register();
+        ROTATOR_CASING = REGISTRATE
+                .block("rotator_casing", RotatorCasing::new)
                 .initialProperties(SharedProperties::stone)
                 .properties(p -> p.strength(1.5f, 6.0f))
                 .tag(AllBlockTags.SAFE_NBT.tag)
