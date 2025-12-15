@@ -3,7 +3,6 @@ package de.wutzuket.create_overdrive.blocks.FusionReactor;
 import de.wutzuket.create_overdrive.blocks.FusionReactorInput.FusionReactorInputBlockEntity;
 import de.wutzuket.create_overdrive.index.CPABlocks;
 import de.wutzuket.create_overdrive.index.CPAFluids;
-import de.wutzuket.create_overdrive.particles.ModParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -191,20 +190,6 @@ public class FusionReactorStructure {
                     0,
                     0,
                     0);
-        }
-    }
-
-    private void showFusionReactorCasingParticles(BlockPos pos) {
-        if (level instanceof ServerLevel _level) {
-            _level.sendParticles(ModParticleTypes.FUSION_REACTOR_CASING_PARTICLE.get(),
-                    pos.getX() + 0.5,
-                    pos.getY() + 0.5,
-                    pos.getZ() + 0.5,
-                    3, // Anzahl der Partikel
-                    0, // X-Ausbreitung
-                    0, // Y-Ausbreitung
-                    0, // Z-Ausbreitung
-                    0); // Geschwindigkeit
         }
     }
 

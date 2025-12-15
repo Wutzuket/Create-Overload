@@ -46,5 +46,9 @@
   "create_overdrive.ponder.fusion_reactor.text_3": "At the bottom of the core you can adjust the Burn Rate",
   "create_overdrive.ponder.fusion_reactor.text_4": "The higher the Burn Rate, the more stress is generated",
 
-  "create_overdrive.gui.burnrate.title": "Burn rate"
+  "create_overdrive.gui.burnrate.title": "Burn rate",
+
+  "create_overdrive.gui.power.title": "Power",
+  "create_overdrive.gui.power.stress": "Stress",
+  "create_overdrive.gui.power.exponent": "Exponent"
 }

@@ -30,7 +30,7 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
 
     protected float burnrate;
     protected ScrollValueBehaviour burnrateCapacity;
-    protected Fluid requiredFluid = Fluids.WATER; // Variable für gewünschten Fluid-Typ
+    protected Fluid requiredFluid;
 
     private boolean active = false;
     private boolean wasJustAssembled = false;

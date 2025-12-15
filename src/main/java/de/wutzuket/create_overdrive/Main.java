@@ -13,7 +13,6 @@ import de.wutzuket.create_overdrive.config.Config;
 import de.wutzuket.create_overdrive.index.CPABlockEntities;
 import de.wutzuket.create_overdrive.index.CPABlocks;
 import de.wutzuket.create_overdrive.index.CPAFluids;
-import de.wutzuket.create_overdrive.particles.ModParticleTypes;
 import de.wutzuket.create_overdrive.ponder.CPAPonderPlugin;
 import de.wutzuket.create_overdrive.recipe.ModRecipes;
 import net.createmod.catnip.lang.FontHelper;
@@ -74,7 +73,6 @@ public class Main {
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         RECIPE_SERIALIZERS.register(modEventBus);
-        ModParticleTypes.register(modEventBus);
         ModRecipes.register(modEventBus);
         modEventBus.addListener(this::registerCapabilities);
         NeoForge.EVENT_BUS.register(this);

@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "": { "model": "create_overdrive:block/rotator_controller" }
+  }
+}
+
