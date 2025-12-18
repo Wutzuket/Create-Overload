@@ -216,9 +216,7 @@ public class ParticleAcceleratorCoreBlockEntity extends KineticBlockEntity {
     }
 
     private void logToAllPlayers(ServerLevel serverLevel, String message) {
-        for (ServerPlayer player : serverLevel.players()) {
-            player.sendSystemMessage(Component.literal(message));
-        }
+        // suppressed
     }
 
     @Override

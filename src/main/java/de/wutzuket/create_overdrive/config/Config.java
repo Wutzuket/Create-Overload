@@ -27,7 +27,7 @@ public class Config {
             .defineInRange("rotator_max_output", 1000, 100, Integer.MAX_VALUE);
 
     public static final ModConfigSpec.DoubleValue FE_STRESS = BUILDER
-            .comment("FE per unit of stress for the Rotator")
+            .comment("FE per 1000 unit of stress for the Rotator")
             .defineInRange("fe_stress", 1, 0.0, Integer.MAX_VALUE);
 
     public static final ModConfigSpec.DoubleValue ROTATOR_EFFICIENCY = BUILDER

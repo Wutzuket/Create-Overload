@@ -11,6 +11,7 @@ import de.wutzuket.create_overdrive.blocks.FusionReactorInput.FusionReactorInput
 import de.wutzuket.create_overdrive.blocks.ParticleAccelerator.AcceleratorStructure;
 import de.wutzuket.create_overdrive.blocks.RotatorController.RotatorControllerBlockEntity;
 import de.wutzuket.create_overdrive.blocks.RotatorInput.RotatorInputBlockEntity;
+import de.wutzuket.create_overdrive.blocks.RotatorOutput.RotatorOutputBlockEntity;
 import de.wutzuket.create_overdrive.config.Config;
 import de.wutzuket.create_overdrive.index.CPABlockEntities;
 import de.wutzuket.create_overdrive.index.CPABlocks;
@@ -130,6 +131,7 @@ public class Main {
         AcceleratorOutputBlockEntity.registerCapabilities(event);
         FusionReactorInputBlockEntity.registerCapabilities(event);
         RotatorInputBlockEntity.registerCapabilities(event);
+        RotatorOutputBlockEntity.registerCapabilities(event);
     }
 
     static {

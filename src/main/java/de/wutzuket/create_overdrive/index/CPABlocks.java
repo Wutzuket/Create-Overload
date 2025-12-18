@@ -17,6 +17,7 @@ import de.wutzuket.create_overdrive.blocks.Ionator.IonatorBlock;
 import de.wutzuket.create_overdrive.blocks.ParticleAccelerator.ParticleAcceleratorCoreBlock;
 import de.wutzuket.create_overdrive.blocks.RotatorController.RotatorControllerBlock;
 import de.wutzuket.create_overdrive.blocks.RotatorInput.RotatorInputBlock;
+import de.wutzuket.create_overdrive.blocks.RotatorOutput.RotatorOutputBlock;
 import net.minecraft.world.level.material.MapColor;
 
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
@@ -34,6 +35,7 @@ public class CPABlocks {
     public static BlockEntry<CasingBlock> ROTATOR_CASING;
     public static BlockEntry<RotatorControllerBlock> ROTATOR_CONTROLLER;
     public static BlockEntry<RotatorInputBlock> ROTATOR_INPUT;
+    public static BlockEntry<RotatorOutputBlock> ROTATOR_OUTPUT;
 
     public CPABlocks() {
     }
@@ -119,6 +121,16 @@ public class CPABlocks {
 
         ROTATOR_INPUT = REGISTRATE
                 .block("rotator_input", RotatorInputBlock::new)
+                .initialProperties(SharedProperties::stone)
+                .properties(p -> p.strength(1.5f, 6.0f))
+                .tag(AllBlockTags.SAFE_NBT.tag)
+                .transform(axeOrPickaxe())
+                .item()
+                .transform(customItemModel())
+                .register();
+
+        ROTATOR_OUTPUT = REGISTRATE
+                .block("rotator_output", RotatorOutputBlock::new)
                 .initialProperties(SharedProperties::stone)
                 .properties(p -> p.strength(1.5f, 6.0f))
                 .tag(AllBlockTags.SAFE_NBT.tag)

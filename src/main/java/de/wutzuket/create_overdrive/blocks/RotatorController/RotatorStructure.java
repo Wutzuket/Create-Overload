@@ -34,6 +34,8 @@ public class RotatorStructure {
 
         // Reset any previously stored input position; we'll set it again if we find one.
         try { coreBlockEntity.setInputPosition(null); } catch (Exception ignored) {}
+        // Reset any previously stored output positions too (we'll set them again if we find any)
+        try { coreBlockEntity.clearOutputPositions(); } catch (Exception ignored) {}
 
         GlassBlockPositions.clear();
         CasingPositions.clear();
@@ -145,14 +147,21 @@ public class RotatorStructure {
 
     private int checkCasingWithRender(BlockPos pos) {
         BlockState state = level.getBlockState(pos);
+        // Wenn normales Casing vorhanden -> OK
         if (state.is(CPABlocks.ROTATOR_CASING.get())) {
             return 1;
-        } else {
-            // Füge Position hinzu wenn der Block NICHT vorhanden ist
-            BlockPos offset = pos.subtract(coreBlockEntity.getBlockPos());
-            CasingPositions.add(offset);
-            return 0;
         }
+
+        // Wenn ein RotatorOutput vorhanden ist, akzeptiere es als Casing und speichere seine Position im Controller
+        if (state.is(CPABlocks.ROTATOR_OUTPUT.get())) {
+            try { coreBlockEntity.addOutputPosition(pos); } catch (Exception ignored) {}
+            return 1;
+        }
+
+        // Füge Position hinzu wenn der Block NICHT vorhanden ist
+        BlockPos offset = pos.subtract(coreBlockEntity.getBlockPos());
+        CasingPositions.add(offset);
+        return 0;
     }
 
     private int checkFlywheelWithRender(BlockPos pos) {
@@ -300,4 +309,3 @@ public class RotatorStructure {
     }
 
 }
-

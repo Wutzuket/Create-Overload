@@ -196,17 +196,16 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
             if (!structureValid) {
                 casing_render = new ArrayList<>(structure.CasingPositions);
                 input_render = new ArrayList<>(structure.InputGhostPositions);
-                System.out.println("Server: Setting " + casing_render.size() + " casing render positions");
-                System.out.println("Server: Setting " + input_render.size() + " input render positions");
+                // server: set casing and input render positions
             } else {
                 casing_render.clear(); // Lösche Ghost-Blöcke wenn Struktur vollständig ist
                 input_render.clear();
-                System.out.println("Server: Clearing casing and input render positions");
+                // server: clearing casing and input render positions
             }
 
             // Synchronisiere mit Client wenn sich etwas geändert hat
             if (!oldCasingRender.equals(casing_render) || !oldInputRender.equals(input_render)) {
-                System.out.println("Server: Notifying client of render changes");
+                // server: notifying client of render changes
                 notifyUpdate();
             }
 

@@ -18,6 +18,7 @@ import de.wutzuket.create_overdrive.blocks.RotatorController.RotatorControllerBl
 import de.wutzuket.create_overdrive.blocks.RotatorController.RotatorControllerBlockRenderer;
 import de.wutzuket.create_overdrive.blocks.RotatorInput.RotatorInputBlockEntity;
 import de.wutzuket.create_overdrive.blocks.RotatorInput.RotatorInputBlockRenderer;
+import de.wutzuket.create_overdrive.blocks.RotatorOutput.RotatorOutputBlockEntity;
 
 import static de.wutzuket.create_overdrive.Main.REGISTRATE;
 
@@ -30,6 +31,7 @@ public class CPABlockEntities {
     public static final BlockEntityEntry<IonatorBlockEntity> IONATOR;
     public static final BlockEntityEntry<RotatorControllerBlockEntity> ROTATOR_CONTROLLER;
     public static final BlockEntityEntry<RotatorInputBlockEntity> ROTATOR_INPUT;
+    public static final BlockEntityEntry<RotatorOutputBlockEntity> ROTATOR_OUTPUT;
 
     static {
 
@@ -72,6 +74,10 @@ public class CPABlockEntities {
                 .visual(() -> SingleAxisRotatingVisual::shaft, false)
                 .validBlocks(() -> CPABlocks.ROTATOR_INPUT.get())
                 .renderer(() -> RotatorInputBlockRenderer::new)
+                .register();
+
+        ROTATOR_OUTPUT = REGISTRATE.blockEntity("rotator_output", RotatorOutputBlockEntity::new)
+                .validBlocks(() -> CPABlocks.ROTATOR_OUTPUT.get())
                 .register();
 
     }

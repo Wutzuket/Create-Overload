@@ -10,11 +10,19 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 import java.util.ArrayList;
+
+// Neu: Energie-Transfer imports
+import de.wutzuket.create_overdrive.config.Config;
+import de.wutzuket.create_overdrive.energy.IEnergyProvider;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+import de.wutzuket.create_overdrive.blocks.RotatorOutput.RotatorOutputBlockEntity;
 
 public class RotatorControllerBlockEntity extends GeneratingKineticBlockEntity {
 
@@ -41,6 +49,10 @@ public class RotatorControllerBlockEntity extends GeneratingKineticBlockEntity {
     public List<BlockPos> input_render = new ArrayList<>();
     // Persistente Referenz auf den tatsächlich eingesetzten Input-Block (absolute Position)
     public BlockPos inputPosition = null;
+    // Persistente Referenz auf den tatsächlich eingesetzten Output-Block (absolute Position)
+    public java.util.List<BlockPos> outputPositions = new ArrayList<>();
+    // Round-robin pointer für die nächste Ausgabe-Position
+    private int lastOutputIndex = 0;
     // Falls der Spieler eine Richtung durch Platzieren eines Input-Blocks angibt, wird diese Richtung hier gespeichert
     private Direction forcedDirection = null;
 
@@ -122,8 +134,70 @@ public class RotatorControllerBlockEntity extends GeneratingKineticBlockEntity {
             if (!oldCasingRender.equals(casing_render) || !oldFlywheelRender.equals(flywheel_render) || !oldGlassRender.equals(glass_render) || !oldInputRender.equals(input_render)) {
                 notifyUpdate();
             }
-        }
-    }
+
+            // Wenn die Struktur vollständig ist und sowohl Input- als auch Output-Position gesetzt sind,
+            // versuche pro Tick Energie vom Input-Block zum Output-Block zu transferieren.
+            if (structureValid) {
+                try {
+                    BlockPos inPos = this.inputPosition;
+                    // structure valid; proceed with energy transfer
+                    if (inPos != null && !this.outputPositions.isEmpty() && level.isLoaded(inPos)) {
+                        var inBe = level.getBlockEntity(inPos);
+                        if (inBe instanceof IEnergyProvider inProv) {
+                            IEnergyStorage inStorage = inProv.getEnergyStorage(null);
+                            if (inStorage != null) {
+                                int maxTransfer = Config.getIntSafe(Config.ROTATOR_MAX_OUTPUT, 1000);
+                                int totalExtractable = Math.min(inStorage.getEnergyStored(), maxTransfer);
+                                int n = this.outputPositions.size();
+                                if (n > 0 && totalExtractable > 0) {
+                                    int base = totalExtractable / n;
+                                    int rem = totalExtractable % n;
+                                    // distribute base + remainder (first rem outputs get +1), start at lastOutputIndex for round-robin
+                                    for (int i = 0; i < n; i++) {
+                                        int idx = (this.lastOutputIndex + i) % n;
+                                        BlockPos outP = this.outputPositions.get(idx);
+                                        if (outP == null) continue;
+                                        if (!level.isLoaded(outP)) continue;
+                                        var outBe = level.getBlockEntity(outP);
+                                        if (!(outBe instanceof IEnergyProvider outProv)) continue;
+                                        IEnergyStorage outStorage = outProv.getEnergyStorage(null);
+                                        if (outStorage == null) continue;
+                                        int amount = base + (i < rem ? 1 : 0);
+                                        if (amount <= 0) continue;
+                                        int acceptedSim = outStorage.receiveEnergy(amount, true);
+                                        if (acceptedSim == 0) {
+                                            try { if (outBe instanceof RotatorOutputBlockEntity rotOut) rotOut.pushToNeighbors(); } catch (Throwable ignored) {}
+                                            acceptedSim = outStorage.receiveEnergy(amount, true);
+                                        }
+                                        if (acceptedSim > 0) {
+                                            int extracted = inStorage.extractEnergy(acceptedSim, false);
+                                            if (extracted <= 0) continue;
+                                            int received = outStorage.receiveEnergy(extracted, false);
+                                            try { inBe.setChanged(); } catch (Throwable ignored) {}
+                                            try { outBe.setChanged(); } catch (Throwable ignored) {}
+                                            // if we extracted less than requested, adjust remaining amounts accordingly by reducing base/rem is unnecessary here
+                                        }
+                                    }
+                                    // rotate start index for next tick to achieve round-robin
+                                    this.lastOutputIndex = (this.lastOutputIndex + 1) % n;
+                                }
+                                // always attempt to push outputs to neighbors as extra fallback
+                                for (BlockPos outP : new ArrayList<>(this.outputPositions)) {
+                                    try { var outBe = level.getBlockEntity(outP); if (outBe instanceof RotatorOutputBlockEntity rotOut) rotOut.pushToNeighbors(); } catch (Throwable ignored) {}
+                                }
+                            }
+                        }
+                    } else {
+                        // positions not set or not loaded
+                    }
+                 } catch (Exception e) {
+                    // transfer exception ignored
+                     // ignore
+                 }
+             }
+         }
+     }
+
 
     protected void updateStress(int stresss) {
         stress = stresss;
@@ -164,6 +238,29 @@ public class RotatorControllerBlockEntity extends GeneratingKineticBlockEntity {
         } else {
             this.inputPosition = null;
         }
+        // Lade persistente outputPosition wenn vorhanden
+        this.outputPositions.clear();
+        if (compound.contains("OutputPosCount")) {
+            int cnt = compound.getInt("OutputPosCount");
+            for (int i = 0; i < cnt; i++) {
+                if (compound.contains("OutputPos_" + i)) {
+                    this.outputPositions.add(BlockPos.of(compound.getLong("OutputPos_" + i)));
+                }
+            }
+        } else if (compound.contains("OutputPos")) {
+            // legacy single pos
+            long lp = compound.getLong("OutputPos");
+            this.outputPositions.add(BlockPos.of(lp));
+        }
+        // Lade und clamp lastOutputIndex
+        if (compound.contains("LastOutputIndex")) {
+            int idx = compound.getInt("LastOutputIndex");
+            if (idx < 0) idx = 0;
+            if (idx >= this.outputPositions.size() && !this.outputPositions.isEmpty()) idx = idx % this.outputPositions.size();
+            this.lastOutputIndex = idx;
+        } else {
+            this.lastOutputIndex = 0;
+        }
         if (compound.contains("MultiblockSize")) {
             this.multiblockSize = compound.getInt("MultiblockSize");
             // Immediately adjust stressMax to reflect loaded size
@@ -186,11 +283,7 @@ public class RotatorControllerBlockEntity extends GeneratingKineticBlockEntity {
         }
 
         if (clientPacket) {
-            // Debug: report which lists were read on client
-            if (compound.contains("CasingRender")) System.out.println("[BE-read-client] CasingRender size=" + compound.getCompound("CasingRender").getInt("size"));
-            if (compound.contains("GlassRender")) System.out.println("[BE-read-client] GlassRender size=" + compound.getCompound("GlassRender").getInt("size"));
-            if (compound.contains("FlywheelRender")) System.out.println("[BE-read-client] FlywheelRender size=" + compound.getCompound("FlywheelRender").getInt("size"));
-            if (compound.contains("InputRender")) System.out.println("[BE-read-client] InputRender size=" + compound.getCompound("InputRender").getInt("size"));
+            // clientPacket read: handled silently
         }
 
         // Lade casing_render Liste für Client
@@ -252,6 +345,16 @@ public class RotatorControllerBlockEntity extends GeneratingKineticBlockEntity {
         if (this.inputPosition != null) {
             compound.putLong("InputPos", this.inputPosition.asLong());
         }
+        // Persistente Speicherung der Output-Position (nur serverseitig zur Welt-Save-Persitenz)
+        if (this.outputPositions != null && !this.outputPositions.isEmpty()) {
+            compound.putInt("OutputPosCount", this.outputPositions.size());
+            for (int i = 0; i < this.outputPositions.size(); i++) {
+                compound.putLong("OutputPos_" + i, this.outputPositions.get(i).asLong());
+            }
+            // also keep legacy first-pos for compatibility
+            compound.putLong("OutputPos", this.outputPositions.get(0).asLong());
+            compound.putInt("LastOutputIndex", this.lastOutputIndex);
+        }
         compound.putInt("MultiblockSize", this.multiblockSize);
         compound.putInt("Stress", this.stress);
         compound.putBoolean("WasJustAssembled", this.wasJustAssembled);
@@ -260,8 +363,6 @@ public class RotatorControllerBlockEntity extends GeneratingKineticBlockEntity {
 
         // Synchronisiere casing_render Liste für Client
         if (clientPacket) {
-            // Debug: report which lists are being sent from server
-            System.out.println("[BE-write-server] sending Casing=" + casing_render.size() + " Glass=" + glass_render.size() + " Flywheel=" + flywheel_render.size() + " Input=" + input_render.size());
              CompoundTag casingTag = new CompoundTag();
              for (int i = 0; i < casing_render.size(); i++) {
                  BlockPos pos = casing_render.get(i);
@@ -312,9 +413,52 @@ public class RotatorControllerBlockEntity extends GeneratingKineticBlockEntity {
         sendData();
     }
 
+    // Setze die Output-Position (wird von RotatorStructure aufgerufen wenn ein Output-Block gefunden wird)
+    public void setOutputPosition(BlockPos pos) {
+        // Legacy setter: set single output (clears others)
+        this.outputPositions.clear();
+        if (pos != null) this.outputPositions.add(pos);
+        setChanged();
+        sendData();
+    }
+
+    // Fügt eine Output-Position zur Struktur hinzu (wird von RotatorStructure aufgerufen)
+    public void addOutputPosition(BlockPos pos) {
+        if (pos == null) return;
+        if (!this.outputPositions.contains(pos)) this.outputPositions.add(pos);
+        setChanged();
+        sendData();
+    }
+
+    public void removeOutputPosition(BlockPos pos) {
+        if (pos == null) return;
+        if (this.outputPositions.remove(pos)) {
+            setChanged();
+            sendData();
+        }
+    }
+
+    public void clearOutputPositions() {
+        if (!this.outputPositions.isEmpty()) {
+            this.outputPositions.clear();
+            setChanged();
+            sendData();
+        }
+    }
+
+    public java.util.List<BlockPos> getOutputPositions() {
+        return this.outputPositions;
+    }
+
+    // Kompatibler Zugriff: gebe erste Output-Position zurück (oder null)
+    public BlockPos getOutputPosition() {
+        return this.outputPositions.isEmpty() ? null : this.outputPositions.get(0);
+    }
+
     public BlockPos getInputPosition() {
         return this.inputPosition;
     }
+
 
     public Direction getForcedDirection() {
         return forcedDirection;
