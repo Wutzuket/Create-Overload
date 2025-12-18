@@ -174,22 +174,7 @@ public class FusionReactorStructure {
             // Füge Position hinzu wenn der Block NICHT vorhanden ist
             BlockPos offset = pos.subtract(coreBlockEntity.getBlockPos());
             CasingPositions.add(offset);
-            System.out.println("Added missing casing at offset: " + offset + " (world pos: " + pos + ")");
             return 0;
-        }
-    }
-
-    private void showEndRodParticles(BlockPos pos) {
-        if (level instanceof ServerLevel _level) {
-            _level.sendParticles(ParticleTypes.END_ROD,
-                    pos.getX() + 0.5,
-                    pos.getY() + 0.5,
-                    pos.getZ() + 0.5,
-                    1,
-                    0,
-                    0,
-                    0,
-                    0);
         }
     }
 

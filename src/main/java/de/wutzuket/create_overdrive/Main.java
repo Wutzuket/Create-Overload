@@ -9,6 +9,8 @@ import de.wutzuket.create_overdrive.blocks.AcceleratorInput.AcceleratorinputBloc
 import de.wutzuket.create_overdrive.blocks.AcceleratorOutput.AcceleratorOutputBlockEntity;
 import de.wutzuket.create_overdrive.blocks.FusionReactorInput.FusionReactorInputBlockEntity;
 import de.wutzuket.create_overdrive.blocks.ParticleAccelerator.AcceleratorStructure;
+import de.wutzuket.create_overdrive.blocks.RotatorController.RotatorControllerBlockEntity;
+import de.wutzuket.create_overdrive.blocks.RotatorInput.RotatorInputBlockEntity;
 import de.wutzuket.create_overdrive.config.Config;
 import de.wutzuket.create_overdrive.index.CPABlockEntities;
 import de.wutzuket.create_overdrive.index.CPABlocks;
@@ -120,12 +122,14 @@ public class Main {
         RenderType cutout = RenderType.cutoutMipped();
 
         ItemBlockRenderTypes.setRenderLayer(CPABlocks.PARTICLE_ACCELERATOR_CORE.get(), cutout);
+        ItemBlockRenderTypes.setRenderLayer(CPABlocks.ROTATOR_INPUT.get(), cutout);
     }
 
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
         AcceleratorinputBlockEntity.registerCapabilities(event);
         AcceleratorOutputBlockEntity.registerCapabilities(event);
         FusionReactorInputBlockEntity.registerCapabilities(event);
+        RotatorInputBlockEntity.registerCapabilities(event);
     }
 
     static {

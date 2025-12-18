@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=up":    { "model": "create_overdrive:block/rotator_input", "x": 0, "y": 0 },
+    "facing=down":  { "model": "create_overdrive:block/rotator_input", "x": 90,  "y": 0 },
+    "facing=north": { "model": "create_overdrive:block/rotator_input", "x": 90,  "y": 180 },
+    "facing=south": { "model": "create_overdrive:block/rotator_input", "x": 90,  "y": 0 },
+    "facing=west":  { "model": "create_overdrive:block/rotator_input", "x": 90,  "y": 90 },
+    "facing=east":  { "model": "create_overdrive:block/rotator_input", "x": 90,  "y": 270 }
+  }
+}

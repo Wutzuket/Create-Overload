@@ -1,5 +1,6 @@
 package de.wutzuket.create_overdrive.index;
 
+import com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import de.wutzuket.create_overdrive.blocks.AcceleratorInput.AcceleratorinputBlockEntity;
 import de.wutzuket.create_overdrive.blocks.AcceleratorOutput.AcceleratorOutputBlockEntity;
@@ -14,6 +15,9 @@ import de.wutzuket.create_overdrive.blocks.ParticleAccelerator.ParticleAccelerat
 import de.wutzuket.create_overdrive.blocks.ParticleAccelerator.ParticleAcceleratorCoreBlockRenderer;
 import de.wutzuket.create_overdrive.blocks.ParticleAccelerator.ParticleAcceleratorCoreVisual;
 import de.wutzuket.create_overdrive.blocks.RotatorController.RotatorControllerBlockEntity;
+import de.wutzuket.create_overdrive.blocks.RotatorController.RotatorControllerBlockRenderer;
+import de.wutzuket.create_overdrive.blocks.RotatorInput.RotatorInputBlockEntity;
+import de.wutzuket.create_overdrive.blocks.RotatorInput.RotatorInputBlockRenderer;
 
 import static de.wutzuket.create_overdrive.Main.REGISTRATE;
 
@@ -25,6 +29,7 @@ public class CPABlockEntities {
     public static final BlockEntityEntry<FusionReactorInputBlockEntity> FUSION_REACTOR_INPUT;
     public static final BlockEntityEntry<IonatorBlockEntity> IONATOR;
     public static final BlockEntityEntry<RotatorControllerBlockEntity> ROTATOR_CONTROLLER;
+    public static final BlockEntityEntry<RotatorInputBlockEntity> ROTATOR_INPUT;
 
     static {
 
@@ -60,6 +65,13 @@ public class CPABlockEntities {
 
         ROTATOR_CONTROLLER = REGISTRATE.blockEntity("rotator_controller", RotatorControllerBlockEntity::new)
                 .validBlocks(() -> CPABlocks.ROTATOR_CONTROLLER.get())
+                .renderer(() -> RotatorControllerBlockRenderer::new)
+                .register();
+
+        ROTATOR_INPUT = REGISTRATE.blockEntity("rotator_input", RotatorInputBlockEntity::new)
+                .visual(() -> SingleAxisRotatingVisual::shaft, false)
+                .validBlocks(() -> CPABlocks.ROTATOR_INPUT.get())
+                .renderer(() -> RotatorInputBlockRenderer::new)
                 .register();
 
     }
