@@ -22,6 +22,11 @@ import de.wutzuket.create_overdrive.blocks.RotatorOutput.RotatorOutputBlockEntit
 
 import static de.wutzuket.create_overdrive.Main.REGISTRATE;
 
+// Neue Importe für das RotatorWheel
+import de.wutzuket.create_overdrive.blocks.RotatorWheel.RotatorWheelBlockEntity;
+import de.wutzuket.create_overdrive.blocks.RotatorWheel.RotatorWheelRenderer;
+import de.wutzuket.create_overdrive.blocks.RotatorWheel.RotatorWheelVisual;
+
 public class CPABlockEntities {
     public static final BlockEntityEntry<ParticleAcceleratorCoreBlockEntity> PARTICLE_ACCELERATOR_CORE;
     public static final BlockEntityEntry<AcceleratorinputBlockEntity> ACCELERATOR_INPUT;
@@ -32,6 +37,7 @@ public class CPABlockEntities {
     public static final BlockEntityEntry<RotatorControllerBlockEntity> ROTATOR_CONTROLLER;
     public static final BlockEntityEntry<RotatorInputBlockEntity> ROTATOR_INPUT;
     public static final BlockEntityEntry<RotatorOutputBlockEntity> ROTATOR_OUTPUT;
+    public static final BlockEntityEntry<RotatorWheelBlockEntity> ROTATORWHEEL;
 
     static {
 
@@ -78,6 +84,13 @@ public class CPABlockEntities {
 
         ROTATOR_OUTPUT = REGISTRATE.blockEntity("rotator_output", RotatorOutputBlockEntity::new)
                 .validBlocks(() -> CPABlocks.ROTATOR_OUTPUT.get())
+                .register();
+
+        ROTATORWHEEL = REGISTRATE
+                .blockEntity("rotatorwheel", RotatorWheelBlockEntity::new)
+                .visual(() -> RotatorWheelVisual::new, false)
+                .validBlocks(CPABlocks.ROTATORWHEEL)
+                .renderer(() -> RotatorWheelRenderer::new)
                 .register();
 
     }

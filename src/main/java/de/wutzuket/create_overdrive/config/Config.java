@@ -34,11 +34,17 @@ public class Config {
             .comment("Efficiency multiplier for energy conversion in the Rotator")
             .defineInRange("rotator_efficiency", 100, 0.1, 1);
 
+    // Neue Option: maximale Breite für Layer-2 (Anzahl Spalten), default 8
+    public static final ModConfigSpec.IntValue ROTATOR_MAX_WIDTH = BUILDER
+            .comment("Maximum allowed width (number of Layer-2 columns) for the Rotator multiblock")
+            .defineInRange("rotator_max_width", 10, 1, 32);
+
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     public static int radius;
     public static int rotator_capacity;
     public static int rotator_max_output;
+    public static int rotator_max_width;
 
     @SubscribeEvent
     public static void onLoad(final ModConfigEvent event) {
@@ -47,6 +53,7 @@ public class Config {
             radius = RADIUS.get();
             rotator_capacity = ROTATOR_CAPACITY.get();
             rotator_max_output = ROTATOR_MAX_OUTPUT.get();
+            rotator_max_width = ROTATOR_MAX_WIDTH.get();
             Main.updateConfigValues();
         }
     }
@@ -70,4 +77,3 @@ public class Config {
         }
     }
 }
-

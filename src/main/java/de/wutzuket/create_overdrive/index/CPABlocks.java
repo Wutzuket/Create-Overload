@@ -1,13 +1,12 @@
 package de.wutzuket.create_overdrive.index;
 
-import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllSpriteShifts;
 import com.simibubi.create.AllTags.AllBlockTags;
 import com.simibubi.create.content.decoration.encasing.CasingBlock;
-import com.simibubi.create.content.decoration.encasing.EncasingRegistry;
-import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedShaftBlock;
+import com.simibubi.create.content.kinetics.flywheel.FlywheelBlock;
+import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.BuilderTransformers;
 import com.simibubi.create.foundation.data.SharedProperties;
+import com.simibubi.create.infrastructure.config.CStress;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import de.wutzuket.create_overdrive.blocks.AcceleratorInput.AcceleratorinputBlock;
 import de.wutzuket.create_overdrive.blocks.AcceleratorOutput.AcceleratorOutputBlock;
@@ -18,6 +17,7 @@ import de.wutzuket.create_overdrive.blocks.ParticleAccelerator.ParticleAccelerat
 import de.wutzuket.create_overdrive.blocks.RotatorController.RotatorControllerBlock;
 import de.wutzuket.create_overdrive.blocks.RotatorInput.RotatorInputBlock;
 import de.wutzuket.create_overdrive.blocks.RotatorOutput.RotatorOutputBlock;
+import de.wutzuket.create_overdrive.blocks.RotatorWheel.RotatorWheelBlock;
 import net.minecraft.world.level.material.MapColor;
 
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
@@ -36,6 +36,7 @@ public class CPABlocks {
     public static BlockEntry<RotatorControllerBlock> ROTATOR_CONTROLLER;
     public static BlockEntry<RotatorInputBlock> ROTATOR_INPUT;
     public static BlockEntry<RotatorOutputBlock> ROTATOR_OUTPUT;
+    public static BlockEntry<RotatorWheelBlock> ROTATORWHEEL;
 
     public CPABlocks() {
     }
@@ -135,6 +136,16 @@ public class CPABlocks {
                 .properties(p -> p.strength(1.5f, 6.0f))
                 .tag(AllBlockTags.SAFE_NBT.tag)
                 .transform(axeOrPickaxe())
+                .item()
+                .transform(customItemModel())
+                .register();
+
+        ROTATORWHEEL = REGISTRATE.block("rotatorwheel", RotatorWheelBlock::new)
+                .initialProperties(SharedProperties::softMetal)
+                .properties(p -> p.noOcclusion()
+                        .mapColor(MapColor.TERRACOTTA_YELLOW))
+                .transform(axeOrPickaxe())
+                .blockstate(BlockStateGen.axisBlockProvider(true))
                 .item()
                 .transform(customItemModel())
                 .register();

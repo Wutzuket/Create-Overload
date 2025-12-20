@@ -16,6 +16,7 @@ import de.wutzuket.create_overdrive.config.Config;
 import de.wutzuket.create_overdrive.index.CPABlockEntities;
 import de.wutzuket.create_overdrive.index.CPABlocks;
 import de.wutzuket.create_overdrive.index.CPAFluids;
+import de.wutzuket.create_overdrive.index.CPAPartialModels;
 import de.wutzuket.create_overdrive.ponder.CPAPonderPlugin;
 import de.wutzuket.create_overdrive.recipe.ModRecipes;
 import net.createmod.catnip.lang.FontHelper;
@@ -72,6 +73,7 @@ public class Main {
         CPABlockEntities.register();
         CPAFluids.register();
         CPABlocks.register();
+        CPAPartialModels.init();
         CREATIVE_MODE_TABS.register(modEventBus);
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);

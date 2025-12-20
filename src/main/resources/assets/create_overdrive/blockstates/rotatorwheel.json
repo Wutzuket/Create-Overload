@@ -1,15 +1,15 @@
 {
   "variants": {
     "axis=x": {
-      "model": "create:block/flywheel/block",
+      "model": "create_overdrive:block/rotatorwheel/block",
       "x": 90,
       "y": 90
     },
     "axis=y": {
-      "model": "create:block/flywheel/block"
+      "model": "create_overdrive:block/rotatorwheel/block"
     },
     "axis=z": {
-      "model": "create:block/flywheel/block",
+      "model": "create_overdrive:block/rotatorwheel/block",
       "x": 90,
       "y": 180
     }
