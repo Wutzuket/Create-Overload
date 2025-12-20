@@ -1,0 +1,6 @@
+{
+  "parent": "create_overdrive:block/rotatorwheel/rotatorwheel",
+  "loader": "neoforge:obj",
+  "flip_v": true,
+  "model": "create:models/block/flywheel/flywheel_shaftless.obj"
+}

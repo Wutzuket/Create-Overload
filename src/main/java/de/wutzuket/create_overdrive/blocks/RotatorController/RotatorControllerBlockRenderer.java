@@ -2,7 +2,6 @@ package de.wutzuket.create_overdrive.blocks.RotatorController;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.decoration.palettes.AllPaletteBlocks;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import de.wutzuket.create_overdrive.index.CPABlocks;
@@ -15,11 +14,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.StainedGlassBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.neoforged.neoforge.common.Tags;
 
 import java.util.List;
 
@@ -39,14 +35,8 @@ public class RotatorControllerBlockRenderer extends KineticBlockEntityRenderer<R
     }
 
     private void renderStructureBlocks(RotatorControllerBlockEntity be, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
-        // Debug: show core pos and facing
-        try {
-            var corePos = be.getBlockPos();
-            var facing = be.getBlockState().getValue(de.wutzuket.create_overdrive.blocks.RotatorController.RotatorControllerBlock.FACING);
-        } catch (Exception ignored) {}
-
-         // Render Casing Ghost-Blöcke
-         if (!be.casing_render.isEmpty()) {
+        // Render Casing Ghost-Blöcke
+        if (!be.casing_render.isEmpty()) {
 
             BlockRenderDispatcher blockRender = Minecraft.getInstance().getBlockRenderer();
             BlockState casingState = CPABlocks.ROTATOR_CASING.getDefaultState();
@@ -96,8 +86,8 @@ public class RotatorControllerBlockRenderer extends KineticBlockEntityRenderer<R
                 else if (offset.getZ() < 0) axis = Direction.Axis.Z;
                 else if (offset.getY() > 0) axis = Direction.Axis.Y;
                 else axis = Direction.Axis.Y;
-                BlockState flywheelState = AllBlocks.FLYWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS, axis);
-                renderBlockAtOffset(blockRender, flywheelState, ms, vertexConsumer, light, overlay, offset.getX(), offset.getY(), offset.getZ());
+                BlockState wheelState = CPABlocks.ROTATORWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS, axis);
+                renderBlockAtOffset(blockRender, wheelState, ms, vertexConsumer, light, overlay, offset.getX(), offset.getY(), offset.getZ());
             }
         }
     }

@@ -36,6 +36,9 @@ public class RotatorControllerBlockEntity extends GeneratingKineticBlockEntity {
 
     protected int multiblockSize = 10;
 
+    // Neue Variable: Breite (Anzahl von Layer-2 Spalten)
+    protected int multiblockWidth = 1;
+
     private boolean first = true;
 
     // Neues Flag wie bei anderen Core BE
@@ -69,6 +72,21 @@ public class RotatorControllerBlockEntity extends GeneratingKineticBlockEntity {
         if (this.multiblockSize == s) return;
         this.multiblockSize = s;
         updateStressMaxFromStructureSize(this.multiblockSize);
+    }
+
+    // Neuer Getter/Setter für Breite
+    public int getMultiblockWidth() {
+        int max = Config.getIntSafe(de.wutzuket.create_overdrive.config.Config.ROTATOR_MAX_WIDTH, 8);
+        return Math.max(1, Math.min(multiblockWidth, max));
+    }
+
+    public void setMultiblockWidth(int width) {
+        int max = Config.getIntSafe(de.wutzuket.create_overdrive.config.Config.ROTATOR_MAX_WIDTH, 8);
+        int w = Math.max(1, Math.min(width, max));
+        if (this.multiblockWidth == w) return;
+        this.multiblockWidth = w;
+        setChanged();
+        sendData();
     }
 
     public int getStressMax() {
@@ -116,13 +134,15 @@ public class RotatorControllerBlockEntity extends GeneratingKineticBlockEntity {
 
             // Kopiere die Ghost-Block-Positionen nur wenn die Struktur unvollständig ist
             if (!structureValid) {
-                casing_render = new ArrayList<>(structure.CasingPositions);
-                // RotatorStructure liefert FlywheelPositions als ergänzende Positionen
-                flywheel_render = new ArrayList<>(structure.FlywheelPositions);
-                // Input-Render aus der eigenen Struktur-Liste (InputPositions)
-                input_render = new ArrayList<>(structure.InputPositions);
-                // Falls RotatorStructure GlassPositions zur Verfügung stellt, nutze sie analog
-                glass_render = new ArrayList<>(structure.getGlassBlockPositions());
+                // Use render-specific lists so we show ghost blocks layer-by-layer
+                casing_render = new ArrayList<>(structure.RenderCasingPositions);
+                if (casing_render.isEmpty() && !structure.CasingPositions.isEmpty()) {
+                    // fallback: if RenderCasingPositions wasn't filled for some reason, use missing casing positions
+                    casing_render = new ArrayList<>(structure.CasingPositions);
+                }
+                flywheel_render = new ArrayList<>(structure.RenderFlywheelPositions);
+                input_render = new ArrayList<>(structure.RenderInputPositions);
+                glass_render = new ArrayList<>(structure.RenderGlassPositions);
             } else {
                 casing_render.clear(); // Lösche Ghost-Blöcke wenn Struktur vollständig ist
                 flywheel_render.clear();
@@ -266,6 +286,11 @@ public class RotatorControllerBlockEntity extends GeneratingKineticBlockEntity {
             // Immediately adjust stressMax to reflect loaded size
             updateStressMaxFromStructureSize(this.multiblockSize);
         }
+        // New: load multiblockWidth
+        if (compound.contains("MultiblockWidth")) {
+            int max = Config.getIntSafe(de.wutzuket.create_overdrive.config.Config.ROTATOR_MAX_WIDTH, 8);
+            this.multiblockWidth = Math.max(1, Math.min(compound.getInt("MultiblockWidth"), max));
+        }
         if (compound.contains("Stress")) {
             this.stress = compound.getInt("Stress");
         }
@@ -356,6 +381,8 @@ public class RotatorControllerBlockEntity extends GeneratingKineticBlockEntity {
             compound.putInt("LastOutputIndex", this.lastOutputIndex);
         }
         compound.putInt("MultiblockSize", this.multiblockSize);
+        // Persist multiblockWidth
+        compound.putInt("MultiblockWidth", this.multiblockWidth);
         compound.putInt("Stress", this.stress);
         compound.putBoolean("WasJustAssembled", this.wasJustAssembled);
         // Forced direction persist
@@ -398,6 +425,7 @@ public class RotatorControllerBlockEntity extends GeneratingKineticBlockEntity {
               glassTag.putInt("size", glass_render.size());
               compound.put("GlassRender", glassTag);
         }
+
 
         super.write(compound, registries, clientPacket);
     }
