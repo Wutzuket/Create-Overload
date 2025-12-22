@@ -29,18 +29,6 @@ public class RotatorOutputBlock extends Block implements EntityBlock, IWrenchabl
     }
 
     @Override
-    public void onRemove(@NotNull BlockState state, @NotNull Level world, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
-        if (!world.isClientSide && state.getBlock() != newState.getBlock()) {
-            // Drop the block item so it always drops when broken/replaced
-            try {
-                net.minecraft.world.item.ItemStack stack = new net.minecraft.world.item.ItemStack(this);
-                Block.popResource(world, pos, stack);
-            } catch (Throwable ignored) {}
-        }
-        super.onRemove(state, world, pos, newState, isMoving);
-    }
-
-    @Override
     public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull net.minecraft.world.level.BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         return Shapes.block();
     }
@@ -48,14 +36,6 @@ public class RotatorOutputBlock extends Block implements EntityBlock, IWrenchabl
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new RotatorOutputBlockEntity(CPABlockEntities.ROTATOR_OUTPUT.get(), pos, state);
-    }
-
-    @Override
-    public @NotNull List<ItemStack> getDrops(@NotNull BlockState state, @NotNull LootParams.Builder builder) {
-        List<ItemStack> dropsOriginal = super.getDrops(state, builder);
-        if (!dropsOriginal.isEmpty())
-            return dropsOriginal;
-        return Collections.singletonList(new ItemStack(this, 1));
     }
 
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {

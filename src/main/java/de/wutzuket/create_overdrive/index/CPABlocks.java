@@ -76,6 +76,8 @@ public class CPABlocks {
                 .block("fusion_reactor_casing", CasingBlock::new)
                 .properties(p -> p.mapColor(MapColor.TERRACOTTA_BROWN))
                 .transform(BuilderTransformers.casing(() -> CPASpriteShifts.FUSION_REACTOR_CASING))
+                .item()
+                .transform(customItemModel())
                 .register();
         FUSION_REACTOR_CORE = REGISTRATE
                 .block("fusion_reactor_core", FusionReactorCoreBlock::new)
@@ -91,16 +93,13 @@ public class CPABlocks {
                 .initialProperties(SharedProperties::stone)
                 .properties(p -> p.strength(1.5f, 6.0f))
                 .tag(AllBlockTags.SAFE_NBT.tag)
-                .transform(axeOrPickaxe())
                 .item()
                 .transform(customItemModel())
                 .register();
         IONATOR = REGISTRATE
                 .block("ionator", IonatorBlock::new)
-                .initialProperties(SharedProperties::stone)
                 .properties(p -> p.strength(1.5f, 6.0f))
                 .tag(AllBlockTags.SAFE_NBT.tag)
-                .transform(axeOrPickaxe())
                 .item()
                 .transform(customItemModel())
                 .register();
@@ -144,7 +143,6 @@ public class CPABlocks {
                 .initialProperties(SharedProperties::softMetal)
                 .properties(p -> p.noOcclusion()
                         .mapColor(MapColor.TERRACOTTA_YELLOW))
-                .transform(axeOrPickaxe())
                 .blockstate(BlockStateGen.axisBlockProvider(true))
                 .item()
                 .transform(customItemModel())

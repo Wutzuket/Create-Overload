@@ -1,13 +1,17 @@
 {
-  "values" : [
-    "create_overdrive:fusion_reactor_casing",
+  "values": [
     "create_overdrive:particle_accelerator_core",
     "create_overdrive:particle_accelerator_input",
     "create_overdrive:particle_accelerator_output",
+    "create_overdrive:fusion_reactor_casing",
     "create_overdrive:fusion_reactor_core",
     "create_overdrive:fusion_reactor_input",
     "create_overdrive:ionator",
     "create_overdrive:rotator_casing",
-    "create_overdrive:rotator_shaft",
+    "create_overdrive:rotator_controller",
+    "create_overdrive:rotator_input",
+    "create_overdrive:rotator_output",
+    "create_overdrive:rotatorwheel"
   ]
 }
+
