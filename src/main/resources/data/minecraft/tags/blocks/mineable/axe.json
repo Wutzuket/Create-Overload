@@ -6,6 +6,8 @@
     "create_overdrive:particle_accelerator_output",
     "create_overdrive:fusion_reactor_core",
     "create_overdrive:fusion_reactor_input",
-    "create_overdrive:ionator"
+    "create_overdrive:ionator",
+    "create_overdrive:rotator_casing",
+    "create_overdrive:rotator_shaft",
   ]
 }

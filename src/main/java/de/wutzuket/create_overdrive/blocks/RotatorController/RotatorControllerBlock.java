@@ -1,5 +1,6 @@
 package de.wutzuket.create_overdrive.blocks.RotatorController;
 
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import de.wutzuket.create_overdrive.index.CPABlockEntities;
 import net.minecraft.core.BlockPos;
@@ -22,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class RotatorControllerBlock extends Block implements IBE<RotatorControllerBlockEntity> {
+public class RotatorControllerBlock extends Block implements IBE<RotatorControllerBlockEntity>, IWrenchable {
 
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 

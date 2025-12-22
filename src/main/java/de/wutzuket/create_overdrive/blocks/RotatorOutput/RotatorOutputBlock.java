@@ -1,5 +1,6 @@
 package de.wutzuket.create_overdrive.blocks.RotatorOutput;
 
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import de.wutzuket.create_overdrive.index.CPABlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
@@ -22,9 +23,21 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-public class RotatorOutputBlock extends Block implements EntityBlock {
+public class RotatorOutputBlock extends Block implements EntityBlock, IWrenchable {
     public RotatorOutputBlock(BlockBehaviour.Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public void onRemove(@NotNull BlockState state, @NotNull Level world, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
+        if (!world.isClientSide && state.getBlock() != newState.getBlock()) {
+            // Drop the block item so it always drops when broken/replaced
+            try {
+                net.minecraft.world.item.ItemStack stack = new net.minecraft.world.item.ItemStack(this);
+                Block.popResource(world, pos, stack);
+            } catch (Throwable ignored) {}
+        }
+        super.onRemove(state, world, pos, newState, isMoving);
     }
 
     @Override
