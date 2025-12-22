@@ -46,5 +46,20 @@ public class CPAPonders {
 
         HELPER.addStoryBoard(CPABlocks.FUSION_REACTOR_INPUT, "fusion_reactor",
                 CPAPonderScenes::fusionReactorCore);
+
+        HELPER.addStoryBoard(CPABlocks.ROTATOR_CONTROLLER, "rotator",
+                CPAPonderScenes::rotator);
+
+        HELPER.addStoryBoard(CPABlocks.ROTATOR_INPUT, "rotator",
+                CPAPonderScenes::rotator);
+
+        HELPER.addStoryBoard(CPABlocks.ROTATOR_OUTPUT, "rotator",
+                CPAPonderScenes::rotator);
+
+        HELPER.addStoryBoard(CPABlocks.ROTATORWHEEL, "rotator",
+                CPAPonderScenes::rotator);
+
+        HELPER.addStoryBoard(CPABlocks.ROTATOR_CASING, "rotator",
+                CPAPonderScenes::rotator);
     }
 }

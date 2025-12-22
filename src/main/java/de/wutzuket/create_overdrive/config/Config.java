@@ -4,7 +4,6 @@ import com.mojang.logging.LogUtils;
 import de.wutzuket.create_overdrive.Main;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.slf4j.Logger;
@@ -20,19 +19,23 @@ public class Config {
 
     public static final ModConfigSpec.IntValue ROTATOR_CAPACITY = BUILDER
             .comment("Energy capacity of the Rotator Input")
-            .defineInRange("rotator_capacity", 100000, 1000, Integer.MAX_VALUE);
+            .defineInRange("rotator_capacity", 1000000, 1000, Integer.MAX_VALUE);
 
     public static final ModConfigSpec.IntValue ROTATOR_MAX_OUTPUT = BUILDER
             .comment("Maximum energy output of the Rotator Input per tick")
-            .defineInRange("rotator_max_output", 1000, 100, Integer.MAX_VALUE);
+            .defineInRange("rotator_max_output", 250000, 100, Integer.MAX_VALUE);
 
     public static final ModConfigSpec.DoubleValue FE_STRESS = BUILDER
             .comment("FE per 1000 unit of stress for the Rotator")
-            .defineInRange("fe_stress", 1, 0.0, Integer.MAX_VALUE);
+            .defineInRange("fe_stress", 25, 0.0, Integer.MAX_VALUE);
 
     public static final ModConfigSpec.DoubleValue ROTATOR_EFFICIENCY = BUILDER
             .comment("Efficiency multiplier for energy conversion in the Rotator")
-            .defineInRange("rotator_efficiency", 100, 0.1, 1);
+            .defineInRange("rotator_efficiency", 1, 0.1, 1);
+
+    public static final ModConfigSpec.IntValue ROTATOR_STRESS_PER_WHEEL = BUILDER
+            .comment("Stress added per extra rotator wheel (per unit of size). Default 10000")
+            .defineInRange("rotator_stress_per_wheel", 10000, 0, Integer.MAX_VALUE);
 
     // Neue Option: maximale Breite für Layer-2 (Anzahl Spalten), default 8
     public static final ModConfigSpec.IntValue ROTATOR_MAX_WIDTH = BUILDER
@@ -44,6 +47,7 @@ public class Config {
     public static int radius;
     public static int rotator_capacity;
     public static int rotator_max_output;
+    public static int rotator_stress_per_wheel;
     public static int rotator_max_width;
 
     @SubscribeEvent
@@ -53,6 +57,7 @@ public class Config {
             radius = RADIUS.get();
             rotator_capacity = ROTATOR_CAPACITY.get();
             rotator_max_output = ROTATOR_MAX_OUTPUT.get();
+            rotator_stress_per_wheel = ROTATOR_STRESS_PER_WHEEL.get();
             rotator_max_width = ROTATOR_MAX_WIDTH.get();
             Main.updateConfigValues();
         }

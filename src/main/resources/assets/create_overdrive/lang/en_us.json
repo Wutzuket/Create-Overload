@@ -54,6 +54,13 @@
   "create_overdrive.ponder.fusion_reactor.text_3": "At the bottom of the core you can adjust the Burn Rate",
   "create_overdrive.ponder.fusion_reactor.text_4": "The higher the Burn Rate, the more stress is generated",
 
+  "create_overdrive.ponder.rotator.header": "Building and Using the Rotator",
+  "create_overdrive.ponder.rotator.text_1": "In the controller you can adjust the max stress",
+  "create_overdrive.ponder.rotator.text_2": "The Rotator is build by multiple layers",
+  "create_overdrive.ponder.rotator.text_3": "You can stack this layer up to 10 times to increase the generation",
+  "create_overdrive.ponder.rotator.text_4": "Here comes the power from",
+  "create_overdrive.ponder.rotator.text_5": "You can connect any cable from other mods to extract the FE",
+
   "create_overdrive.gui.burnrate.title": "Burn rate",
 
   "create_overdrive.gui.power.title": "Power",

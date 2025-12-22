@@ -115,6 +115,10 @@ public class Main {
             event.accept(CPAFluids.FUSIONREACTORFUEL.getBucket().get());
             event.accept(STELLAR_STEEL_ALLOY);
             event.accept(CPABlocks.ROTATOR_CASING);
+            event.accept(CPABlocks.ROTATOR_CONTROLLER);
+            event.accept(CPABlocks.ROTATOR_INPUT);
+            event.accept(CPABlocks.ROTATOR_OUTPUT);
+            event.accept(CPABlocks.ROTATORWHEEL);
         }
 
     }

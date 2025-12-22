@@ -2,20 +2,16 @@ package de.wutzuket.create_overdrive.ponder;
 
 import com.google.common.collect.ImmutableList;
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.content.kinetics.gauge.SpeedGaugeBlockEntity;
 import com.simibubi.create.content.kinetics.gauge.StressGaugeBlockEntity;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
-import de.wutzuket.create_overdrive.blocks.FusionReactor.FusionReactorCoreBlockEntity;
 import de.wutzuket.create_overdrive.blocks.Ionator.IonatorBlockEntity;
 import net.createmod.catnip.data.IntAttached;
 import net.createmod.catnip.math.Pointing;
 import net.createmod.catnip.nbt.NBTHelper;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
-import net.createmod.ponder.api.scene.Selection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -23,7 +19,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.function.UnaryOperator;
 
 public class CPAPonderScenes {
     public CPAPonderScenes(){
@@ -259,6 +254,277 @@ public class CPAPonderScenes {
                 .placeNearTarget()
                 .attachKeyFrame()
                 .text("The higher the Burn Rate, the more stress is generated");
+
+        scene.idle(40);
+
+    }
+
+    public static void rotator(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("rotator", "Building and Using the Rotator");
+        scene.configureBasePlate(0, 0, 8);
+        scene.world().showSection(util.select().layer(0), Direction.UP);
+
+        BlockPos corePos = util.grid().at(1, 3, 2);
+        BlockPos inputPos = util.grid().at(5, 3, 2);
+        BlockPos outputPos = util.grid().at(2, 4, 1);
+
+        scene.world().showSection(util.select().position(corePos), Direction.DOWN);
+        scene.idle(10);
+
+        int cos = 1;
+        int sin = 0;
+
+        Vec3 blockSurface = util.vector().blockSurface(corePos, Direction.WEST)
+                .add(0, 0, 0);
+        scene.overlay().showFilterSlotInput(blockSurface, Direction.WEST, 80);
+        scene.overlay().showControls(blockSurface, Pointing.DOWN, 60).rightClick();
+        scene.idle(20);
+
+        scene.overlay().showText(40)
+                .text("In the controller you can adjust the max stress")
+                .attachKeyFrame()
+                .placeNearTarget()
+                .pointAt(blockSurface);
+
+        scene.idle(40);
+
+        //Layer 1
+        for (int i = 0; i <= 1; i++) {
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX(),
+                            corePos.getY() + i,
+                            corePos.getZ() + (-1 * cos)
+                    ),
+                    Direction.DOWN
+            );
+
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX(),
+                            corePos.getY() - i,
+                            corePos.getZ() + cos
+                    ),
+                    Direction.DOWN
+            );
+
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX(),
+                            corePos.getY() - 1,
+                            corePos.getZ() + (-i * cos + 0 * sin)
+                    ),
+                    Direction.DOWN
+            );
+
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX() + (0 * cos + i * sin),
+                            corePos.getY() + 1,
+                            corePos.getZ() + (i * cos + 0 * sin)
+                    ),
+                    Direction.DOWN
+            );
+        }
+
+
+
+        scene.overlay().showText(40)
+                .pointAt(util.vector().topOf(corePos))
+                .placeNearTarget()
+                .attachKeyFrame()
+                .text("The Rotator is build by multiple layers");
+        scene.idle(40);
+
+        //Layer 2
+        for (int i = 0; i <= 1; i++) {
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX() + (0 * cos - 1 * sin) + 1,
+                            corePos.getY() + i,
+                            corePos.getZ() + (-1 * cos + 0 * sin)
+                    ),
+                    Direction.DOWN
+            );
+
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX() + (0 * cos + 1 * sin) + 1,
+                            corePos.getY() - i,
+                            corePos.getZ() + (1 * cos + 0 * sin)
+                    ),
+                    Direction.DOWN
+            );
+
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX() + (0 * cos - i * sin) + 1,
+                            corePos.getY() - 1,
+                            corePos.getZ() + (-i * cos + 0 * sin)
+                    ),
+                    Direction.DOWN
+            );
+
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX() + (0 * cos + i * sin) + 1,
+                            corePos.getY() + 1,
+                            corePos.getZ() + (i * cos + 0 * sin)
+                    ),
+                    Direction.DOWN
+            );
+        }
+        scene.world().showSection(util.select().position(corePos.offset(1, 0, 0)), Direction.DOWN);
+
+        scene.idle(10);
+
+        for (int i = 0; i <= 1; i++) {
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX() + (0 * cos - 1 * sin) + 2,
+                            corePos.getY() + i,
+                            corePos.getZ() + (-1 * cos + 0 * sin)
+                    ),
+                    Direction.DOWN
+            );
+
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX() + (0 * cos + 1 * sin) + 2,
+                            corePos.getY() - i,
+                            corePos.getZ() + (1 * cos + 0 * sin)
+                    ),
+                    Direction.DOWN
+            );
+
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX() + (0 * cos - i * sin) + 2,
+                            corePos.getY() - 1,
+                            corePos.getZ() + (-i * cos + 0 * sin)
+                    ),
+                    Direction.DOWN
+            );
+
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX() + (0 * cos + i * sin) + 2,
+                            corePos.getY() + 1,
+                            corePos.getZ() + (i * cos + 0 * sin)
+                    ),
+                    Direction.DOWN
+            );
+        }
+        scene.world().showSection(util.select().position(corePos.offset(2, 0, 0)), Direction.DOWN);
+
+        scene.idle(10);
+
+        scene.overlay().showText(40)
+                .pointAt(util.vector().topOf(corePos.offset(2,1,0)))
+                .placeNearTarget()
+                .attachKeyFrame()
+                .text("You can stack this layer up to 10 times to increase the generation");
+
+        scene.rotateCameraY(90);
+
+        scene.idle(40);
+
+        for (int i = 0; i <= 1; i++) {
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX() + 3,
+                            corePos.getY() + i,
+                            corePos.getZ() + (-1 * cos)
+                    ),
+                    Direction.DOWN
+            );
+
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX() + (0 * cos + 1 * sin) + 3,
+                            corePos.getY() - i,
+                            corePos.getZ() + (1 * cos + 0 * sin)
+                    ),
+                    Direction.DOWN
+            );
+
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX() + (0 * cos - i * sin) + 3,
+                            corePos.getY() - 1,
+                            corePos.getZ() + (-i * cos + 0 * sin)
+                    ),
+                    Direction.DOWN
+            );
+
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX() + (0 * cos + i * sin) + 3,
+                            corePos.getY() + 1,
+                            corePos.getZ() + (i * cos + 0 * sin)
+                    ),
+                    Direction.DOWN
+            );
+        }
+        scene.world().showSection(util.select().position(corePos.offset(3, 0, 0)), Direction.DOWN);
+
+        scene.idle(10);
+
+        for (int i = 0; i <= 1; i++) {
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX() + (0 * cos - 1 * sin) + 4,
+                            corePos.getY() + i,
+                            corePos.getZ() + (-1 * cos + 0 * sin)
+                    ),
+                    Direction.DOWN
+            );
+
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX() + (0 * cos + 1 * sin) + 4,
+                            corePos.getY() - i,
+                            corePos.getZ() + (1 * cos + 0 * sin)
+                    ),
+                    Direction.DOWN
+            );
+
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX() + (0 * cos - i * sin) + 4,
+                            corePos.getY() - 1,
+                            corePos.getZ() + (-i * cos + 0 * sin)
+                    ),
+                    Direction.DOWN
+            );
+
+            scene.world().showSection(
+                    util.select().position(
+                            corePos.getX() + (0 * cos + i * sin) + 4,
+                            corePos.getY() + 1,
+                            corePos.getZ() + (i * cos + 0 * sin)
+                    ),
+                    Direction.DOWN
+            );
+        }
+        scene.world().showSection(util.select().position(corePos.offset(4, 0, 0)), Direction.DOWN);
+
+        scene.idle(10);
+
+        scene.overlay().showText(40)
+                .pointAt(util.vector().centerOf(inputPos))
+                .placeNearTarget()
+                .attachKeyFrame()
+                .text("Here comes the power from");
+
+        scene.idle(40);
+
+
+        scene.overlay().showText(40)
+                .pointAt(util.vector().topOf(outputPos))
+                .placeNearTarget()
+                .text("You can connect any cable from other mods to extract the FE");
 
         scene.idle(40);
 

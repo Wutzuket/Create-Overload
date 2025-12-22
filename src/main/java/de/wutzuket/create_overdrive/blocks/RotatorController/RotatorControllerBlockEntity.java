@@ -224,9 +224,10 @@ public class RotatorControllerBlockEntity extends GeneratingKineticBlockEntity {
     }
 
     public void updateStressMaxFromStructureSize(int multiblockSize) {
-        // Lineare Skalierung: pro size +10_000, start bei 0
+        // Lineare Skalierung: pro size * configured stress per wheel, start bei 0
         long size = Math.max(0, multiblockSize);
-        long candidate = size * 10_000L;
+        int perWheel = Config.getIntSafe(Config.ROTATOR_STRESS_PER_WHEEL, 10000);
+        long candidate = size * (long) perWheel;
         int newMax;
         if (candidate > Integer.MAX_VALUE) {
             newMax = Integer.MAX_VALUE;
