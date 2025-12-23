@@ -5,7 +5,6 @@ import de.wutzuket.create_overdrive.index.CPABlocks;
 import de.wutzuket.create_overdrive.index.CPAFluids;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -22,7 +21,7 @@ public class FusionReactorStructure {
 
     private final Level level;
     private final FusionReactorCoreBlockEntity coreBlockEntity;
-    private List<BlockPos> inputBlockPositions = new ArrayList<>();
+    private final List<BlockPos> inputBlockPositions = new ArrayList<>();
     public List<BlockPos> CasingPositions = new ArrayList<>();
     public List<BlockPos> InputGhostPositions = new ArrayList<>(); // Neue Liste für Input-Ghost-Blöcke
 

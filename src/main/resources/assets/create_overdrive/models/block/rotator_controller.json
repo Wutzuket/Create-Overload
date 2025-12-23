@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "create_overdrive:block/rotator_casing"
+    "all": "create_overdrive:block/rotator_controller"
   }
 }

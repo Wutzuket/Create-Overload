@@ -2,7 +2,6 @@ package de.wutzuket.create_overdrive.blocks.FusionReactor;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.logging.LogUtils;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import de.wutzuket.create_overdrive.index.CPABlocks;
@@ -19,7 +18,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.util.RandomSource;
-import org.slf4j.Logger;
 
 import java.util.List;
 
@@ -71,11 +69,11 @@ public class FusionReactorCoreBlockRenderer extends KineticBlockEntityRenderer<F
     private void renderBlockAtOffset(BlockRenderDispatcher blockRender, BlockState state, PoseStack ms, VertexConsumer vertexConsumer, int light, int overlay, int x, int y, int z) {
         ms.pushPose();
         ms.translate(x, y, z);
-        renderBlockWithAlpha(blockRender, state, ms, vertexConsumer, light, overlay, 0.8f); // Erhöhe Alpha für bessere Sichtbarkeit
+        renderBlockWithAlpha(blockRender, state, ms, vertexConsumer, light, overlay); // Erhöhe Alpha für bessere Sichtbarkeit
         ms.popPose();
     }
 
-    private void renderBlockWithAlpha(BlockRenderDispatcher blockRender, BlockState state, PoseStack ms, VertexConsumer vertexConsumer, int light, int overlay, float alpha) {
+    private void renderBlockWithAlpha(BlockRenderDispatcher blockRender, BlockState state, PoseStack ms, VertexConsumer vertexConsumer, int light, int overlay) {
         var model = blockRender.getBlockModel(state);
         var random = RandomSource.create(42L);
 
@@ -83,7 +81,7 @@ public class FusionReactorCoreBlockRenderer extends KineticBlockEntityRenderer<F
             random.setSeed(42L);
             List<BakedQuad> quads = model.getQuads(state, direction, random);
             for (BakedQuad quad : quads) {
-                vertexConsumer.putBulkData(ms.last(), quad, 1.0f, 1.0f, 1.0f, alpha, light, overlay);
+                vertexConsumer.putBulkData(ms.last(), quad, 1.0f, 1.0f, 1.0f, (float) 0.8, light, overlay);
             }
         }
 
@@ -91,7 +89,7 @@ public class FusionReactorCoreBlockRenderer extends KineticBlockEntityRenderer<F
         random.setSeed(42L);
         List<BakedQuad> quads = model.getQuads(state, null, random);
         for (BakedQuad quad : quads) {
-            vertexConsumer.putBulkData(ms.last(), quad, 1.0f, 1.0f, 1.0f, alpha, light, overlay);
+            vertexConsumer.putBulkData(ms.last(), quad, 1.0f, 1.0f, 1.0f, (float) 0.8, light, overlay);
         }
     }
 

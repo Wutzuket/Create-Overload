@@ -1,6 +1,5 @@
 package de.wutzuket.create_overdrive.blocks.AcceleratorOutput;
 
-import de.wutzuket.create_overdrive.Main;
 import de.wutzuket.create_overdrive.index.CPABlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -9,29 +8,20 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
 public class AcceleratorOutputBlockEntity extends BlockEntity implements Container {
-
-    public static final BlockCapability<IItemHandler, Direction> ITEM_HANDLER_BLOCK =
-            BlockCapability.create(
-                    ResourceLocation.fromNamespaceAndPath(Main.MODID, "accelerator_output_block"),
-                    IItemHandler.class,
-                    Direction.class);
 
     private final ItemStackHandler items = new ItemStackHandler(1) {
         @Override
@@ -78,13 +68,13 @@ public class AcceleratorOutputBlockEntity extends BlockEntity implements Contain
     }
 
     @Override
-    public void setItem(int slot, ItemStack stack) {
+    public void setItem(int slot, @NotNull ItemStack stack) {
         items.setStackInSlot(slot, stack);
         setChanged();
     }
 
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NotNull Player player) {
         return true;
     }
 
@@ -95,13 +85,13 @@ public class AcceleratorOutputBlockEntity extends BlockEntity implements Contain
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put("inventory", items.serializeNBT(registries));
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.loadAdditional(tag, registries);
         items.deserializeNBT(registries, tag.getCompound("inventory"));
     }
@@ -113,7 +103,7 @@ public class AcceleratorOutputBlockEntity extends BlockEntity implements Contain
     }
 
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
         return super.getUpdateTag(registries);
     }
 
@@ -122,7 +112,7 @@ public class AcceleratorOutputBlockEntity extends BlockEntity implements Contain
                 Capabilities.ItemHandler.BLOCK,
                 CPABlockEntities.ACCELERATOR_OUTPUT.get(),
                 (be, context) -> {
-                    if (context instanceof Direction direction) {
+                    if (context instanceof Direction) {
                         return be.items;
                     }
                     return null;

@@ -22,7 +22,6 @@ public class FusionReactorCoreVisual extends SingleAxisRotatingVisual<FusionReac
     }
 
     private void animate(float pt) {
-        // Animation logic for fusion reactor core
     }
 
     @Override

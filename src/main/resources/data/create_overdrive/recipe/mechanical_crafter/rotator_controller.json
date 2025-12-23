@@ -1,0 +1,33 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": false,
+  "key": {
+    "A": {
+      "item": "create_overdrive:rotator_casing"
+    },
+    "B": {
+      "item": "create:railway_casing"
+    },
+    "C": {
+      "item": "minecraft:netherite_block"
+    },
+    "P": {
+      "item": "create:precision_mechanism"
+    },
+    "S": {
+      "item": "create_overdrive:rotatorwheel"
+    }
+  },
+  "pattern": [
+    " ABA ",
+    "ACPCA",
+    "BPSPB",
+    "ACPCA",
+    " ABA "
+  ],
+  "result": {
+    "count": 1,
+    "id": "create_overdrive:rotator_controller"
+  },
+  "show_notification": false
+}

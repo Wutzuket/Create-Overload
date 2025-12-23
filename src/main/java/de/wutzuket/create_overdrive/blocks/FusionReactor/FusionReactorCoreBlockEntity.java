@@ -11,7 +11,6 @@ import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollVa
 
 import de.wutzuket.create_overdrive.index.CPAFluids;
 import de.wutzuket.create_overdrive.util.BurnrateScrollValueBehaviour;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -92,10 +91,6 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
         return AllBlocks.WATER_WHEEL.get();
     }
 
-    public int getGeneratedStress() {
-        return (int) calculateAddedStressCapacity();
-    }
-
     @Override
     public void write(CompoundTag tag, HolderLookup.Provider holderLookup, boolean clientPacket) {
         super.write(tag, holderLookup, clientPacket);
@@ -140,7 +135,7 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
             try {
                 ResourceLocation rl = ResourceLocation.parse(tag.getString("RequiredFluid"));
                 Fluid loaded = BuiltInRegistries.FLUID.get(rl);
-                if (loaded != null && loaded != Fluids.EMPTY)
+                if (loaded != Fluids.EMPTY)
                     requiredFluid = loaded;
             } catch (Exception ignored) {
             }
@@ -183,6 +178,7 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
             first = false;
         }
 
+        assert this.level != null;
         if (!this.level.isClientSide) {
             if (structure == null) {
                 structure = new FusionReactorStructure(this.level, this);
@@ -223,10 +219,6 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
         super.lazyTick();
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
     public void setActive(boolean active) {
         this.active = active;
         updateGeneratedRotation(); // Füge das zurück um Stress-Änderungen zu übernehmen
@@ -239,21 +231,6 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
 
     public void setWasJustAssembled(boolean wasJustAssembled) {
         this.wasJustAssembled = wasJustAssembled;
-        notifyUpdate();
-    }
-
-    public float getBurnrate() {
-        return burnrate;
-    }
-
-    // Getter und Setter für den Required Fluid
-    public Fluid getRequiredFluid() {
-        return requiredFluid;
-    }
-
-    public void setRequiredFluid(Fluid fluid) {
-        this.requiredFluid = fluid;
-        updateGeneratedRotation();
         notifyUpdate();
     }
 

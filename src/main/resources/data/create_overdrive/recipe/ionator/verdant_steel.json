@@ -1,0 +1,16 @@
+{
+  "type": "create_overdrive:ionator",
+  "ingredients": [
+    {
+      "item": "create_overdrive:stellar_steel_alloy"
+    },
+    {
+      "item": "minecraft:emerald"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_overdrive:verdant_steel", "count": 1
+    }
+  ]
+}

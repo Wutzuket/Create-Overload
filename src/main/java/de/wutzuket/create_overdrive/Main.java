@@ -9,14 +9,10 @@ import de.wutzuket.create_overdrive.blocks.AcceleratorInput.AcceleratorinputBloc
 import de.wutzuket.create_overdrive.blocks.AcceleratorOutput.AcceleratorOutputBlockEntity;
 import de.wutzuket.create_overdrive.blocks.FusionReactorInput.FusionReactorInputBlockEntity;
 import de.wutzuket.create_overdrive.blocks.ParticleAccelerator.AcceleratorStructure;
-import de.wutzuket.create_overdrive.blocks.RotatorController.RotatorControllerBlockEntity;
 import de.wutzuket.create_overdrive.blocks.RotatorInput.RotatorInputBlockEntity;
 import de.wutzuket.create_overdrive.blocks.RotatorOutput.RotatorOutputBlockEntity;
 import de.wutzuket.create_overdrive.config.Config;
-import de.wutzuket.create_overdrive.index.CPABlockEntities;
-import de.wutzuket.create_overdrive.index.CPABlocks;
-import de.wutzuket.create_overdrive.index.CPAFluids;
-import de.wutzuket.create_overdrive.index.CPAPartialModels;
+import de.wutzuket.create_overdrive.index.*;
 import de.wutzuket.create_overdrive.ponder.CPAPonderPlugin;
 import de.wutzuket.create_overdrive.recipe.ModRecipes;
 import net.createmod.catnip.lang.FontHelper;
@@ -39,9 +35,11 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.slf4j.Logger;
+
+import static de.wutzuket.create_overdrive.index.CPAItems.STELLAR_STEEL_ALLOY;
+import static de.wutzuket.create_overdrive.index.CPAItems.VERDANT_STEEL;
 
 @Mod("create_overdrive")
 public class Main {
@@ -61,7 +59,6 @@ public class Main {
 
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS;
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS;
-    public static final DeferredItem<Item> STELLAR_STEEL_ALLOY;
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> PARTICLE_ACCELERATOR_TAB;
     public static int RADIUS;
@@ -73,6 +70,7 @@ public class Main {
         CPABlockEntities.register();
         CPAFluids.register();
         CPABlocks.register();
+        CPAItems.register();
         CPAPartialModels.init();
         CREATIVE_MODE_TABS.register(modEventBus);
         BLOCKS.register(modEventBus);
@@ -119,6 +117,7 @@ public class Main {
             event.accept(CPABlocks.ROTATOR_INPUT);
             event.accept(CPABlocks.ROTATOR_OUTPUT);
             event.accept(CPABlocks.ROTATORWHEEL);
+            event.accept(VERDANT_STEEL);
         }
 
     }
@@ -144,7 +143,6 @@ public class Main {
         RECIPE_SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, "create_overdrive");
         CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, "create_overdrive");
 
-        STELLAR_STEEL_ALLOY = ITEMS.registerSimpleItem("stellar_steel_alloy");
         PARTICLE_ACCELERATOR_TAB = CREATIVE_MODE_TABS.register("create_overdrive_tab", () -> net.minecraft.world.item.CreativeModeTab.builder().icon(() -> new net.minecraft.world.item.ItemStack(CPABlocks.PARTICLE_ACCELERATOR_CORE.get())).title(net.minecraft.network.chat.Component.translatable("itemGroup.create_overdrive_tab")).build());
         RADIUS = 10;
     }

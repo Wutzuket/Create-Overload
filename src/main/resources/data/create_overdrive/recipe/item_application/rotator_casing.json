@@ -1,0 +1,16 @@
+{
+  "type": "create:item_application",
+  "ingredients": [
+    {
+      "item": "create_overdrive:fusion_reactor_casing"
+    },
+    {
+      "item": "create_overdrive:verdant_steel"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_overdrive:rotator_casing"
+    }
+  ]
+}
