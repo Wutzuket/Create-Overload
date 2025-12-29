@@ -9,6 +9,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.blockEntity.behaviour.CenteredSideValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
 
+import de.wutzuket.create_overdrive.config.Config;
 import de.wutzuket.create_overdrive.index.CPAFluids;
 import de.wutzuket.create_overdrive.util.BurnrateScrollValueBehaviour;
 import net.minecraft.core.BlockPos;
@@ -68,7 +69,7 @@ public class FusionReactorCoreBlockEntity extends GeneratingKineticBlockEntity {
 
     public float calculateAddedStressCapacity() {
         // Stress berechnet sich aus burnrate * 0.01 * 2^20, durch 32 geteilt
-        float maxStress = (float) Math.pow(2, 20);
+        int maxStress = Config.max_fusion_generation;
         float capacity = (active && burnrate > 0) ? (burnrate * 0.01f * maxStress / 32f) : 0;
         this.lastCapacityProvided = capacity;
         return capacity;

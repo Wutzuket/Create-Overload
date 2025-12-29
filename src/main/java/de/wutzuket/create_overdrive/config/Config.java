@@ -42,6 +42,10 @@ public class Config {
             .comment("Maximum allowed width (number of Layer-2 columns) for the Rotator multiblock")
             .defineInRange("rotator_max_width", 10, 1, 32);
 
+    public static final ModConfigSpec.IntValue MAX_FUSION_GENERATION = BUILDER
+            .comment("Maximum SU that the fusion reactor generates")
+            .defineInRange("max_fusion_generation", 1048576, 1000, Integer.MAX_VALUE);
+
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     public static int radius;
@@ -49,6 +53,7 @@ public class Config {
     public static int rotator_max_output;
     public static int rotator_stress_per_wheel;
     public static int rotator_max_width;
+    public static int max_fusion_generation;
 
     @SubscribeEvent
     public static void onLoad(final ModConfigEvent event) {
@@ -59,6 +64,7 @@ public class Config {
             rotator_max_output = ROTATOR_MAX_OUTPUT.get();
             rotator_stress_per_wheel = ROTATOR_STRESS_PER_WHEEL.get();
             rotator_max_width = ROTATOR_MAX_WIDTH.get();
+            max_fusion_generation = MAX_FUSION_GENERATION.get();
             Main.updateConfigValues();
         }
     }
